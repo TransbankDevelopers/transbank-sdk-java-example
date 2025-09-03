@@ -23,7 +23,9 @@
             <main>
                 <div th:insert="${content}"></div>
             </main>
-            <div th:replace="~{partials/channels :: channels}"></div>
+            <div class="mt-32">
+                <div th:replace="~{partials/channels :: channels}"></div>
+            </div>
         </div>
         <div class="helper-content" th:if="${navigation}">
             <div th:replace="~{partials/navigation :: navigation}"></div>
