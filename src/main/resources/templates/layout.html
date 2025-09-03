@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
+<head>
+    <title>Transbank Sdk Java Example</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <link rel="stylesheet" th:href="@{/css/monokai.min.css}" />
+    <script th:src="@{/js/menu_controller.js}"></script>
+</head>
+<body>
+<div class="main-container">
+    <div th:replace="~{partials/header :: header}"></div>
+    <div class="body-container" th:classappend="${navigation} ? '' : ' no-nav'">
+        <div th:replace="~{partials/sidebar :: sidebar}"></div>
+        <div class="body-content" >
+            <div th:replace="~{partials/breadcrumbs :: breadcrumbs}"></div>
+            <main>
+                <div th:insert="${content}"></div>
+            </main>
+            <div class="mt-32">
+                <div th:replace="~{partials/channels :: channels}"></div>
+            </div>
+        </div>
+        <div class="helper-content" th:if="${navigation}">
+            <div th:replace="~{partials/navigation :: navigation}"></div>
+        </div>
+    </div>
+
+    <div th:replace="~{partials/footer :: footer}"></div>
+</div>
+<script th:src="@{/js/sidebar.js}"></script>
+<script th:src="@{/js/navigation.js}"></script>
+<script th:src="@{/js/highlight.min.js}"></script>
+<script>
+    hljs.highlightAll();
+</script>
+
+</body>
+</html>

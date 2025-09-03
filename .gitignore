@@ -1,0 +1,15 @@
+.idea
+*.iml
+target
+TestUtil.java
+dependency-reduced-pom.xml
+.classpath
+.factorypath
+.project
+.settings/
+.vscode
+Test.java
+.gradle
+build
+gradle
+.DS_Store

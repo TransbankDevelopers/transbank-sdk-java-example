@@ -1,0 +1,29 @@
+<aside th:fragment="sidebar_mobile" class="tbk-sidebar-mobile" id="sidebar">
+    <div class="btn-close-container">
+        <button id="close-sidebar-btn" class="toggle-close-btn">
+            <img th:src="@{/images/close.svg}" class="toggle-close-btn" alt="close-btn" />
+        </button>
+    </div>
+
+    <nav class="sidebar-content" id="sidebar-content">
+        <div>
+            <p class="tbk-sidebar-item-title">Webpay Plus</p>
+            <ul>
+                <li style="margin-bottom:20px;">
+                    <button class="sidebar-collapsible-title" data-collapsible="webpay-plus">
+                        <span class="general-text">Webpay Plus</span>
+                        <img th:src="@{/images/t-arrow.svg}" class="arrow" alt="t-arrow" width="24" height="24" />
+                    </button>
+                    <ul class="collapsible-content" id="collapse-webpay-plus">
+                        <li class="collapsible-items">
+                            <a th:href="@{/webpay_plus/create}" class="tbk-sidebar-item">
+                                Flujo Completo
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <hr class="sidebar-divider" />
+        </div>
+    </nav>
+</aside>
