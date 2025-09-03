@@ -1,0 +1,33 @@
+<div th:fragment="header" class="tbk-header">
+    <div class="tbk-header-left">
+        <button class="tbk-buger-menu" id="burger-menu">
+            <img th:src="@{/images/menu.svg}"
+                 alt="tbk logo"
+                 width="32"
+                 height="32"/>
+        </button>
+        <a th:href="@{/}">
+            <img th:src="@{/images/tbk-logo.svg}"
+                 alt="tbk logo"
+                 width="181"
+                 height="34"
+                 class="tbk-logo"/>
+        </a>
+    </div>
+
+    <div class="tbk-header-options">
+        <a href="https://transbank.continuumhq.dev/slack_community"
+           target="_blank"
+           rel="noopener"
+           class="tbk-button secondary">
+            <span class="underline text-tbk-red">Comunidad Slack</span>
+        </a>
+
+        <button id="dark-mode" class="dark-mode-btn">
+            <img th:src="@{/images/sun.svg}" alt="sun" class="sun-img"/>
+            <img th:src="@{/images/moon.svg}" alt="moon" class="moon-img"/>
+        </button>
+    </div>
+
+    <div th:replace="partials/sidebar_mobile :: sidebar_mobile"></div>
+</div>

@@ -1,0 +1,13 @@
+<div th:fragment="breadcrumbs" class="breadcrumbs-container">
+    <div th:each="entry, stat : ${breadcrumbs}" class="breadcrumbs-items">
+        <a th:href="${entry.value}"
+           th:classappend="${stat.last} ? 'current-breadcrumb' : ''"
+           th:text="${entry.key}">
+        </a>
+
+        <img th:if="${!stat.last}"
+             src="/images/t-arrow.svg"
+             alt=">"
+             width="24" height="24" />
+    </div>
+</div>

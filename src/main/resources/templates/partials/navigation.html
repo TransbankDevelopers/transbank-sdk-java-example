@@ -1,0 +1,10 @@
+<div th:fragment="navigation" class="nav-container" th:if="${navigation}">
+    <span class="nav-title">Contenido en esta página</span>
+    <ul class="nav-list">
+        <li th:each="entry : ${navigation}">
+            <a th:href="'#' + ${entry.key}" class="item"
+               th:text="${entry.value}">
+            </a>
+        </li>
+    </ul>
+</div>
