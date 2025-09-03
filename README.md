@@ -6,7 +6,11 @@ Proyecto de ejemplo mostrando el paso a paso de como usar el SDK Java de transba
 
 ## Requisitos
 
--   Java 17+
+- Java 17+
+- Maven
+- Spring Boot
+- Thymeleaf
+- Lombok
 
 ## Instalación
 
