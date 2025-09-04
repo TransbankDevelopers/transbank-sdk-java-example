@@ -1,22 +1,55 @@
 <aside th:fragment="sidebar" class="tbk-sidebar" id="sidebar-desk">
     <div class="toogle-btn-container">
-        <button class="tbk-toggle-btn" id="toggle-sidebar-btn">
-            &lt;
-        </button>
+        <button class="tbk-toggle-btn" id="toggle-sidebar-btn">&lt;</button>
     </div>
 
     <nav class="sidebar-content" id="sidebar-content">
         <div>
             <p class="tbk-sidebar-item-title">Webpay Plus</p>
             <ul>
-                <li style="margin-bottom:20px;">
+                <li style="margin-bottom: 20px">
                     <button class="sidebar-collapsible-title">
                         <span class="general-text">Webpay Plus</span>
-                        <img th:src="@{/images/t-arrow.svg}" class="arrow" alt="t-arrow" width="24" height="24"/>
+                        <img
+                            th:src="@{/images/t-arrow.svg}"
+                            class="arrow"
+                            alt="t-arrow"
+                            width="24"
+                            height="24"
+                        />
                     </button>
                     <ul class="collapsible-content" id="collapse-webpay-plus">
                         <li class="collapsible-items">
-                            <a th:href="@{/webpay_plus/create}" class="tbk-sidebar-item">
+                            <a
+                                th:href="@{/webpay_plus/create}"
+                                class="tbk-sidebar-item"
+                            >
+                                Flujo Completo
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <p class="tbk-sidebar-item-title">Webpay Plus Diferido</p>
+                <li style="margin-bottom: 20px">
+                    <button class="sidebar-collapsible-title">
+                        <span class="general-text">Webpay Plus Diferido</span>
+                        <img
+                            th:src="@{/images/t-arrow.svg}"
+                            class="arrow"
+                            alt="t-arrow"
+                            width="24"
+                            height="24"
+                        />
+                    </button>
+                    <ul
+                        class="collapsible-content"
+                        id="collapse-webpay-plus-deferred"
+                    >
+                        <li class="collapsible-items">
+                            <a
+                                th:href="@{/webpay_plus_deferred/create}"
+                                class="tbk-sidebar-item"
+                            >
                                 Flujo Completo
                             </a>
                         </li>
@@ -24,7 +57,5 @@
                 </li>
             </ul>
         </div>
-
-
     </nav>
 </aside>
