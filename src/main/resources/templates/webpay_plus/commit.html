@@ -1,0 +1,93 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Webpay Plus - Confirmar transacción</h1>
+        <p class="mb-32">
+            En este paso es importante confirmar la transacción para notificar a
+            Transbank que hemos recibido exitosamente los detalles de la
+            transacción.
+            <b
+                >Es importante destacar que si la confirmación no se realiza, la
+                transacción será caducada.</b
+            >
+        </p>
+
+        <h2 id="data">Paso 1 - Datos recibidos:</h2>
+        <p class="mb-32">
+            Después de completar el flujo en el formulario de pago, recibirás un
+            POST con la siguiente información:
+        </p>
+
+        <pre><code class="language-html" th:text="'token_ws=' + ${details.token_ws}"></code></pre>
+
+        <h2 class="mt-32" id="request">Paso 2 - Petición:</h2>
+        <p class="mb-32">
+            Utilizarás el token recibido para confirmar la transacción mediante
+            el SDK.
+        </p>
+
+        <pre><code class="language-java">
+final WebpayPlusTransactionCommitResponse response = tx.commit(tokenWs);
+        </code></pre>
+
+        <h2 class="mt-32" id="response">Paso 3 - Respuesta:</h2>
+        <p class="mb-32">
+            Una vez que la transacción ha sido confirmada Transbank
+            proporcionará la siguiente información. Es fundamental conservar
+            esta respuesta y verificar que el campo "response_code" tenga un
+            valor de cero y que el campo "status" sea "AUTHORIZED".
+        </p>
+
+        <pre><code class="language-json" th:text="${details.resp}"></code></pre>
+
+        <h2 class="mt-32" id="operations">¡Listo!</h2>
+        <p class="mb-32">
+            Con la confirmación exitosa, ya puedes mostrar al usuario una página
+            de éxito de la transacción, proporcionándole la tranquilidad de que
+            el proceso ha sido completado con éxito.
+        </p>
+        <p>
+            Después de confirmar la transacción, podrás realizar otras
+            operaciones útiles:
+        </p>
+        <ul>
+            <li>
+                <span class="fw-700">Reembolsar:</span> Puedes reversar o anular
+                el pago según ciertas condiciones comerciales.
+            </li>
+            <li>
+                <span class="fw-700">Consultar Estado:</span> Hasta 7 días
+                después de la transacción, podrás consultar el estado de la
+                transacción.
+            </li>
+        </ul>
+
+        <form th:action="@{${details['refund-endpoint']}}" method="POST">
+            <div class="tbk-refund-card mb-32">
+                <div class="input-container">
+                    <label for="amount" class="tbk-label"
+                        >Monto a reembolsar:</label
+                    >
+                    <input
+                        type="text"
+                        name="amount"
+                        class="tbk-input-text"
+                        th:value="${details.amount}"
+                    />
+                    <input
+                        type="hidden"
+                        name="token_ws"
+                        th:value="${details.token_ws}"
+                    />
+                </div>
+                <div class="tbk-refund-button-container">
+                    <button class="tbk-button primary">REEMBOLSAR</button>
+                    <a
+                        th:href="@{${details['status-endpoint']}(token_ws=${details.token_ws})}"
+                        class="tbk-button primary"
+                        >CONSULTAR ESTADO</a
+                    >
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
