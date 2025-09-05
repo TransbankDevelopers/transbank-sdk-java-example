@@ -101,22 +101,11 @@ public class WebpayPlusController extends BaseController {
         Map<String, Object> details = new HashMap<>();
         model.addAttribute("details", details);
 
-        // Flujo de transacción abortada por el usuario
-        if (tbkToken != null) {
-            details.put("tbkToken", tbkToken);
-            details.put("buyOrder", tbkBuyOrder);
-            details.put("sessionId", tbkSessionId);
-            return "webpay_plus/aborted";
-        }
+        // TODO: Aborted by user flow
 
-        // Flujo de timeout
-        if (tokenWs == null) {
-            details.put("buyOrder", tbkBuyOrder);
-            details.put("sessionId", tbkSessionId);
-            return "webpay_plus/timeout";
-        }
+        // TODO: Timeout flow
 
-        // Flujo normal
+        // Normal flow
         log.info(String.format("token_ws : %s", tokenWs));
         details.put("token_ws", tokenWs);
 
