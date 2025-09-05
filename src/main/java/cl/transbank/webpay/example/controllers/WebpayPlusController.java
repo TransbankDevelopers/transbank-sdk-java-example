@@ -83,9 +83,9 @@ public class WebpayPlusController extends BaseController {
 
         Map<String, String> navigation = new LinkedHashMap<>() {
             {
-                put("data", "Paso 1 - Datos recibidos");
-                put("request", "Paso 2 - Petición");
-                put("response", "Paso 3 - Respuesta");
+                put("data", "Datos recibidos");
+                put("request", "Petición");
+                put("response", "Respuesta");
                 put("operations", "¡Listo!");
             }
         };
@@ -134,8 +134,8 @@ public class WebpayPlusController extends BaseController {
     public String status(@RequestParam("token_ws") String token, Model model) {
         Map<String, String> navigation = new LinkedHashMap<>() {
             {
-                put("request", "Paso 1 - Petición");
-                put("response", "Paso 2 - Respuesta");
+                put("request", "Petición");
+                put("response", "Respuesta");
             }
         };
         model.addAttribute("navigation", navigation);
@@ -172,8 +172,8 @@ public class WebpayPlusController extends BaseController {
 
         Map<String, String> navigation = new LinkedHashMap<>() {
             {
-                put("request", "Paso 1 - Petición");
-                put("response", "Paso 2 - Respuesta");
+                put("request", "Petición");
+                put("response", "Respuesta");
             }
         };
         model.addAttribute("navigation", navigation);
