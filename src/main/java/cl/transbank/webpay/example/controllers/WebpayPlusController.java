@@ -129,4 +129,38 @@ public class WebpayPlusController extends BaseController {
         return "webpay_plus/commit";
     }
 
+    @GetMapping("/status")
+    public String status(@RequestParam("token_ws") String token, Model model) {
+        Map<String, String> navigation = new LinkedHashMap<>() {
+            {
+                put("request", "Paso 1 - Petición");
+                put("response", "Paso 2 - Respuesta");
+            }
+        };
+        model.addAttribute("navigation", navigation);
+
+        Map<String, String> breadcrumbs = new LinkedHashMap<>() {
+            {
+                put("Inicio", "/");
+                put("Webpay Plus", "/webpay_plus/create");
+                put("Consultar estado de transacción", "#");
+            }
+        };
+        model.addAttribute("breadcrumbs", breadcrumbs);
+
+        Map<String, Object> details = new HashMap<>();
+        model.addAttribute("details", details);
+        details.put("token_ws", token);
+
+        try {
+            final var response = tx.status(token);
+            details.put("resp", toJson(response));
+        } catch (Exception e) {
+            log.error("ERROR", e);
+            details.put("resp", e.getMessage());
+        }
+
+        return "webpay_plus/status";
+    }
+
 }
