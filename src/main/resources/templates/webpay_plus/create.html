@@ -1,20 +1,24 @@
 <div th:replace="~{layout :: layout(~{::content})}">
     <div th:fragment="content">
-
         <h1>Webpay Plus - Creación de transacción</h1>
-        <p class="mb-32">En esta etapa, se procederá a la creación de una transacción con el fin de obtener un
-            identificador
-            único. Esto
-            nos permitirá redirigir al Tarjetahabiente hacia el formulario de pago en el siguiente paso.
+        <p class="mb-32">
+            En esta etapa, se procederá a la creación de una transacción con el
+            fin de obtener un identificador único. Esto nos permitirá redirigir
+            al Tarjetahabiente hacia el formulario de pago en el siguiente paso.
         </p>
 
         <h2 id="request">Paso 1: Petición</h2>
         <ul class="mb-32">
-            <li>Comienza por importar la librería WebpayPlus en tu proyecto.</li>
-            <li>Luego, crea una transacción utilizando las funciones proporcionadas mediante el SDK.</li>
+            <li>
+                Comienza por importar la librería WebpayPlus en tu proyecto.
+            </li>
+            <li>
+                Luego, crea una transacción utilizando las funciones
+                proporcionadas mediante el SDK.
+            </li>
         </ul>
 
-<pre><code class="language-java">
+        <pre><code class="language-java">
 import cl.transbank.common.IntegrationType;
 import cl.transbank.webpay.common.WebpayOptions;
 import cl.transbank.webpay.webpayplus.WebpayPlus;
@@ -23,41 +27,73 @@ tx = new WebpayPlus.Transaction(new WebpayOptions(commerceCode, apiKey, Integrat
 var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
 </code></pre>
 
-
         <h2 class="mt-32" id="response">Paso 2: Respuesta</h2>
-        <p class="mb-32">Una vez que hayas creado la transacción, aquí encontrarás los datos de respuesta generados por el
-            proceso.
+        <p class="mb-32">
+            Una vez que hayas creado la transacción, aquí encontrarás los datos
+            de respuesta generados por el proceso.
         </p>
 
-<pre><code class="language-java" th:text="${response_data_json}"></code></pre>
+        <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
 
         <h2 class="mt-32" id="form">Paso 3: Creación del formulario</h2>
-        <p class="mb-32">Utiliza estos datos de respuesta para redireccionar al usuario al formulario de pago al
-            Tarjetahabiente.
-            Este formulario será la interfaz a través de la cual el usuario realizará su transacción.
+        <p class="mb-32">
+            Utiliza estos datos de respuesta para redireccionar al usuario al
+            formulario de pago al Tarjetahabiente. Este formulario será la
+            interfaz a través de la cual el usuario realizará su transacción.
         </p>
 
-
+        <pre><code class="language-html" th:text="'<form action=&quot;https://webpay3gint.transbank.cl/webpayserver/initTransaction&quot; method=&quot;POST&quot;>
+    <input type=&quot;hidden&quot; name=&quot;token_ws&quot; value=&quot;01ab2e983627734baa78733a85cc6aeeae03d03d55def255e7475468b432ae49&quot; />
+    <input type=&quot;submit&quot; value=&quot;Pagar&quot; />
+</form>'"></code></pre>
 
         <h2 class="mt-32" id="example">Ejemplo</h2>
-        <p class="mb-32">Para llevar a cabo una transacción de compra en nuestro sistema, primero debemos crear la
-            transacción. Utilizaremos los siguientes datos para configurar la transacción:
+        <p class="mb-32">
+            Para llevar a cabo una transacción de compra en nuestro sistema,
+            primero debemos crear la transacción. Utilizaremos los siguientes
+            datos para configurar la transacción:
         </p>
 
-        <div class="mb-32">
+        <div class="tbk-table mb-32">
+            <div class="table-column tbk-head">Parámetro</div>
+            <div class="table-column tbk-head">Valor</div>
 
+            <th:block th:each="entry : ${request}">
+                <div class="table-column" th:text="${entry.key}"></div>
+                <div class="table-column" th:text="${entry.value}"></div>
+            </th:block>
         </div>
 
-        <p class="mb-32">Por último, con la respuesta del servicio que confirma la creación de la transacción, procedemos
-            a crear el formulario de pago. Para fines de este ejemplo, haremos visible el campo "token_ws", el cual es
-            esencial para completar el proceso de pago de manera exitosa.
+        <p class="mb-32">
+            Por último, con la respuesta del servicio que confirma la creación
+            de la transacción, procedemos a crear el formulario de pago. Para
+            fines de este ejemplo, haremos visible el campo "token_ws", el cual
+            es esencial para completar el proceso de pago de manera exitosa.
         </p>
-        <span>Antes de continuar al formulario de Webpay, asegúrate de contar con los datos de las tarjetas de prueba que están en la <a href="https://transbankdevelopers.cl/documentacion/como_empezar#tarjetas-de-prueba" target="_blank" class="tbk-link">documentación.</a></span>
+        <span
+            >Antes de continuar al formulario de Webpay, asegúrate de contar con
+            los datos de las tarjetas de prueba que están en la
+            <a
+                href="https://transbankdevelopers.cl/documentacion/como_empezar#tarjetas-de-prueba"
+                target="_blank"
+                class="tbk-link"
+                >documentación.</a
+            ></span
+        >
 
-
-
+        <form th:action="${response_data.url}" method="POST">
+            <div class="tbk-card">
+                <span class="tbk-card-title">Formulario de redirección</span>
+                <input
+                    type="text"
+                    class="tbk-input-text"
+                    name="token_ws"
+                    th:value="${response_data.token}"
+                />
+                <div class="tbk-card-footer">
+                    <button class="tbk-button primary">PAGAR</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-
-
-
