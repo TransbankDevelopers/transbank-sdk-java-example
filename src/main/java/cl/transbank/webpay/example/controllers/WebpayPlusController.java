@@ -11,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -161,6 +162,44 @@ public class WebpayPlusController extends BaseController {
         }
 
         return "webpay_plus/status";
+    }
+
+    @PostMapping("/refund")
+    public String refund(@RequestParam("token_ws") String token,
+            @RequestParam("amount") double amount,
+            Model model) {
+        log.info(String.format("token_ws : %s | amount : %s", token, amount));
+
+        Map<String, String> navigation = new LinkedHashMap<>() {
+            {
+                put("request", "Paso 1 - Petición");
+                put("response", "Paso 2 - Respuesta");
+            }
+        };
+        model.addAttribute("navigation", navigation);
+
+        Map<String, String> breadcrumbs = new LinkedHashMap<>() {
+            {
+                put("Inicio", "/");
+                put("Webpay Plus", "/webpay-plus/create");
+                put("Reembolsar", "#");
+            }
+        };
+        model.addAttribute("breadcrumbs", breadcrumbs);
+
+        Map<String, Object> details = new HashMap<>();
+        model.addAttribute("details", details);
+        details.put("token_ws", token);
+
+        try {
+            final var response = tx.refund(token, amount);
+            details.put("resp", toJson(response));
+        } catch (Exception e) {
+            log.error("ERROR", e);
+            details.put("resp", e.getMessage());
+        }
+
+        return "webpay_plus/refund";
     }
 
 }
