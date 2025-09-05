@@ -46,7 +46,7 @@ public class WebpayPlusController extends BaseController {
         Map<String, String> breadcrumbs = new LinkedHashMap<>() {
             {
                 put("Inicio", "/");
-                put("Webpay Plus", "/webpay-plus/");
+                put("Webpay Plus", "/webpay_plus/create");
             }
         };
         model.addAttribute("breadcrumbs", breadcrumbs);
