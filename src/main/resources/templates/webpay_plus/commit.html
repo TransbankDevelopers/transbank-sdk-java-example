@@ -17,7 +17,7 @@
             POST con la siguiente información:
         </p>
 
-        <pre><code class="language-html" th:text="'token_ws=' + ${details.token_ws}"></code></pre>
+        <pre><code class="language-html" th:text="${details.commit_url} + '?token_ws=' + ${details.token_ws}"></code></pre>
 
         <h2 class="mt-32" id="request">Paso 2 - Petición:</h2>
         <p class="mb-32">

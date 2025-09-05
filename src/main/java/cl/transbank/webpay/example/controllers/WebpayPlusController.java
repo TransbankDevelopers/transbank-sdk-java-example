@@ -73,6 +73,7 @@ public class WebpayPlusController extends BaseController {
 
     @RequestMapping(value = "/commit", method = { RequestMethod.GET, RequestMethod.POST })
     public String commit(
+            HttpServletRequest req,
             @RequestParam(name = "token_ws", required = false) String tokenWs,
             @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
             @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String tbkBuyOrder,
@@ -108,6 +109,7 @@ public class WebpayPlusController extends BaseController {
         // Normal flow
         log.info(String.format("token_ws : %s", tokenWs));
         details.put("token_ws", tokenWs);
+        details.put("commit_url", req.getRequestURL().toString());
 
         try {
             final WebpayPlusTransactionCommitResponse response = tx.commit(tokenWs);
