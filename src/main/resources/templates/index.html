@@ -1,60 +1,100 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Transbank Sdk Java Example</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="mobile-web-app-capable" content="yes" />
+    <head>
+        <title>Transbank Sdk Java Example</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
 
-    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
-    <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
+        <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+        <link
+            rel="shortcut icon"
+            th:href="@{/favicon.ico}"
+            type="image/x-icon"
+        />
 
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+        <link rel="stylesheet" th:href="@{/css/styles.css}" />
 
-    <script th:src="@{/js/menu_controller.js}"></script>
-</head>
-<body>
-<div class="layout-home">
-    <div th:replace="~{partials/header :: header}"></div>
-    <div class="flex-col">
-        <div class="tbk-home-container">
-            <h1 class="title">Proyectos de Ejemplo del SDK para Java</h1>
-            <div class="tbk-home-intro">
-                <img th:src="@{/images/java.svg}" alt="JavaLogo" class="self-center" width="168" height="120">
-                <p class="tbk-home-text">
-                    Este proyecto te brinda la oportunidad de experimentar con las diversas
-                    modalidades de productos que Transbank ofrece a través de su SDK
-                    compatible con Java. Conoce de manera práctica las soluciones y
-                    servicios que Transbank pone a tu disposición, permitiéndote
-                    comprender cómo integrar estas herramientas tecnológicas en tus
-                    proyectos y aplicaciones. ¡Explora las opciones disponibles y
-                    descubre cómo aprovechar al máximo estas capacidades!
-                </p>
-            </div>
+        <script th:src="@{/js/menu_controller.js}"></script>
 
-            <hr class="separed-home" />
+        <!-- Google tag (gtag.js) -->
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-6CW8MF50ZX"
+        ></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
 
-            <div class="cards-info-container">
-                <div class="card-info ">
-                    <div class="card-info-body ">
-                        <img th:src="@{/images/webpay.svg}" alt="webpay" width="300" height="74" class="card-info-image">
-                        <p class="card-info-text">
-                            El producto más usado para realizar un pago online. Se genera
-                            un único cobro para todos los productos o servicios adquiridos por el tarjetahabiente
-                            (carro de compras).
+            gtag("config", "G-6CW8MF50ZX");
+        </script>
+    </head>
+    <body>
+        <div class="layout-home">
+            <div th:replace="~{partials/header :: header}"></div>
+            <div class="flex-col">
+                <div class="tbk-home-container">
+                    <h1 class="title">
+                        Proyectos de Ejemplo del SDK para Java
+                    </h1>
+                    <div class="tbk-home-intro">
+                        <img
+                            th:src="@{/images/java.svg}"
+                            alt="JavaLogo"
+                            class="self-center"
+                            width="168"
+                            height="120"
+                        />
+                        <p class="tbk-home-text">
+                            Este proyecto te brinda la oportunidad de
+                            experimentar con las diversas modalidades de
+                            productos que Transbank ofrece a través de su SDK
+                            compatible con Java. Conoce de manera práctica las
+                            soluciones y servicios que Transbank pone a tu
+                            disposición, permitiéndote comprender cómo integrar
+                            estas herramientas tecnológicas en tus proyectos y
+                            aplicaciones. ¡Explora las opciones disponibles y
+                            descubre cómo aprovechar al máximo estas
+                            capacidades!
                         </p>
                     </div>
-                    <a th:href="@{/webpay_plus/create}" class="card-info-link">Ver ejemplos y modalidades</a>
+
+                    <hr class="separed-home" />
+
+                    <div class="cards-info-container">
+                        <div class="card-info">
+                            <div class="card-info-body">
+                                <img
+                                    th:src="@{/images/webpay.svg}"
+                                    alt="webpay"
+                                    width="300"
+                                    height="74"
+                                    class="card-info-image"
+                                />
+                                <p class="card-info-text">
+                                    El producto más usado para realizar un pago
+                                    online. Se genera un único cobro para todos
+                                    los productos o servicios adquiridos por el
+                                    tarjetahabiente (carro de compras).
+                                </p>
+                            </div>
+                            <a
+                                th:href="@{/webpay_plus/create}"
+                                class="card-info-link"
+                                >Ver ejemplos y modalidades</a
+                            >
+                        </div>
+                    </div>
+
+                    <hr class="separed-home" />
+
+                    <div th:replace="~{partials/channels :: channels}"></div>
                 </div>
             </div>
-
-            <hr class="separed-home" />
-
-
-            <div th:replace="~{partials/channels :: channels}"></div>
+            <div th:replace="~{partials/footer :: footer}"></div>
         </div>
-    </div>
-    <div th:replace="~{partials/footer :: footer}"></div>
-</div>
-</body>
+    </body>
 </html>
