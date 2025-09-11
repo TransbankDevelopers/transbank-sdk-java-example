@@ -1,0 +1,78 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Webpay Plus Diferido - Confirmar transacción</h1>
+        <p class="mb-32">En este paso es importante confirmar la transacción para notificar a Transbank que hemos
+            recibido
+            exitosamente los detalles de la transacción. <b>Es importante destacar que si la confirmación no se realiza,
+                la
+                transacción será caducada.</b>
+
+        </p>
+
+        <h2 id="data">Paso 1 - Datos recibidos:</h2>
+        <p class="mb-32">
+            Después de completar el flujo en el formulario de pago, recibirás un GET con la siguiente
+            información:
+        </p>
+
+        <pre><code class="language-html"
+                   th:text="${returnUrl} + '?token_ws=' + ${token}"></code></pre>
+
+        <h2 class="mt-32" id="request">Paso 2 - Petición:</h2>
+        <p class="mb-32">Utilizarás el token recibido para confirmar la transacción mediante el SDK.</p>
+
+        <pre><code class="language-java">
+final WebpayPlusTransactionCommitResponse response = tx.commit(tokenWs);
+        </code></pre>
+
+        <h2 class="mt-32" id="response">Paso 3 - Respuesta:</h2>
+        <p class="mb-32">
+            Una vez que la transacción ha sido confirmada Transbank proporcionará la siguiente información.
+            Es fundamental conservar esta respuesta y verificar que el campo "response_code" tenga un valor de cero y
+            que el
+            campo "status" sea "AUTHORIZED".
+        </p>
+
+        <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
+
+        <h2 class="mt-32">¡Listo!</h2>
+        <p class="mb-32">
+            Es importante tener en cuenta que la transacción aún no ha sido capturada, por lo que hay que dejarle saber
+            al
+            tarjetahabiente que necesita un paso más; solo se ha retenido el saldo en su tarjeta. Después de confirmar
+            la
+            transacción, puedes:
+        </p>
+        <ul class="mb-32">
+            <li>
+                Capturar la transacción.
+            </li>
+            <li>
+                Revertir la transacción si es necesario.
+            </li>
+            <li>
+                Consultar el estado de la transacción hasta 7 días después de realizada.
+            </li>
+        </ul>
+
+        <form action="/webpay-plus-deferred/capture" method="GET">
+            <div class="tbk-card">
+                <p class="mb-32">Capturar la transacción para realmente capturar el dinero que habia sido previamente
+                    reservado.</p>
+                <div class="input-container">
+                    <label for="amount" class="tbk-label">Monto a capturar:</label>
+                    <input type="text" name="amount" class="tbk-input-text" th:value="${response_data.amount}">
+                    <input type="hidden" name="buy_order" class="tbk-input-text" th:value="${response_data.buyOrder}">
+                    <input type="hidden" name="authorization_code" class="tbk-input-text"
+                           th:value="${response_data.authorizationCode}">
+                    <input type="hidden" name="token_ws" class="tbk-input-text" th:value="${token}">
+                </div>
+                <div class="tbk-card-footer ">
+                    <button class="tbk-button primary">CAPTURAR</button>
+                </div>
+            </div>
+        </form>
+        <a th:href="@{/webpay-plus-deferred/status(token_ws=${token})}"
+           class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+    </div>
+</div>

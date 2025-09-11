@@ -1,0 +1,31 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Webpay Plus Diferido - Consultar estado de transacción</h1>
+        <p class="mb-32">
+            Puedes solicitar el estado de una transacción hasta 7 días después
+            de su realización. No hay límite de solicitudes de este tipo durante
+            ese período. Sin embargo, una vez pasados los 7 días, ya no podrás
+            revisar su estado.
+        </p>
+
+        <h2 class="mt-32" id="request">Paso 1 - Petición:</h2>
+        <p class="mb-32">
+            Para realizar la consulta, necesitas el token de la transacción de
+            la cual deseas obtener el estado. Utiliza este token para realizar
+            una llamada a WebpayPlus.Transaction.
+        </p>
+        <pre><code class="language-java">
+final var response = tx.status(token);
+        </code></pre>
+
+        <h2 class="mt-32" id="response">Paso 2 - Respuesta</h2>
+        <p class="mb-32">
+            Transbank responderá con la siguiente información. Asegúrate de
+            guardar esta respuesta, y la única validación necesaria es que el
+            campo "response_code" sea igual a cero.
+        </p>
+        <div class="mb-32">
+            <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
+        </div>
+    </div>
+</div>
