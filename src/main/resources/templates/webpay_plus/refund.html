@@ -43,10 +43,10 @@
         <p class="mb-32">
             En
             <a
-                href="https://www.transbankdevelopers.cl/producto/webpay#anulaciones-y-reversas"
-                target="_blank"
-                class="tbk-link"
-                >este link
+                    href="https://www.transbankdevelopers.cl/producto/webpay#anulaciones-y-reversas"
+                    target="_blank"
+                    class="tbk-link"
+            >este link
             </a>
             podrás ver mayor información sobre las condiciones y casos para
             anular o reversar transacciones.
@@ -63,13 +63,13 @@ final var response = tx.refund(token, amount);
             Parcial.
         </p>
         <div class="mb-32">
-            <pre><code class="language-json" th:text="${details.resp}"></code></pre>
+            <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
         </div>
 
         <a
-            th:href="@{/webpay_plus/status(token_ws=${details.token_ws})}"
-            class="tbk-button primary mb-32"
-            >CONSULTAR ESTADO</a
+                th:href="@{/webpay-plus/status(token_ws=${token})}"
+                class="tbk-button primary mb-32"
+        >CONSULTAR ESTADO</a
         >
     </div>
 </div>
