@@ -104,13 +104,34 @@ public class WebpayPlusDeferredController extends BaseController {
         return VIEW_CREATE;
     }
 
-    @RequestMapping(value = "/commit", method = {RequestMethod.GET, RequestMethod.POST})
+    @GetMapping(value = "/commit")
     public String commit(
             HttpServletRequest req,
             @RequestParam(name = "token_ws", required = false) String tokenWs,
             @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
             @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String tbkBuyOrder,
             @RequestParam(name = "TBK_ID_SESION", required = false) String tbkSessionId,
+            Model model) throws TransactionCommitException, IOException {
+        return commitBase(req, tokenWs, tbkToken, tbkBuyOrder, tbkSessionId, model);
+    }
+
+    @PostMapping(value = "/commit")
+    public String commitPost(
+            HttpServletRequest req,
+            @RequestParam(name = "token_ws", required = false) String tokenWs,
+            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
+            @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String tbkBuyOrder,
+            @RequestParam(name = "TBK_ID_SESION", required = false) String tbkSessionId,
+            Model model) throws TransactionCommitException, IOException {
+        return commitBase(req, tokenWs, tbkToken, tbkBuyOrder, tbkSessionId, model);
+    }
+
+    public String commitBase(
+            HttpServletRequest req,
+            String tokenWs,
+            String tbkToken,
+            String tbkBuyOrder,
+            String tbkSessionId,
             Model model) throws TransactionCommitException, IOException {
 
         model.addAttribute("navigation", NAV_COMMIT);
