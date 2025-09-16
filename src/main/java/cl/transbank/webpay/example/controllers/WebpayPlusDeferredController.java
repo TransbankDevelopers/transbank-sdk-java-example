@@ -69,10 +69,9 @@ public class WebpayPlusDeferredController extends BaseController {
     }
 
     private void addBreadcrumbs(Model model, String label, String url) {
-        Map<String, String> breadcrumbs = new LinkedHashMap<>() {{
-            put("Inicio", "/");
-            put("Webpay Plus Diferido", BASE_URL + "/create");
-        }};
+        var breadcrumbs = new LinkedHashMap<String, String>();
+        breadcrumbs.put("Inicio", "/");
+        breadcrumbs.put("Webpay Plus Diferido", BASE_URL + "/create");
         if (label != null) {
             breadcrumbs.put(label, url);
         }
