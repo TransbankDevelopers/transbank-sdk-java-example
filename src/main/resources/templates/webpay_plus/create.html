@@ -42,7 +42,8 @@ var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
             interfaz a través de la cual el usuario realizará su transacción.
         </p>
 
-        <pre><code class="language-html" th:text="'<form action=&quot;https://webpay3gint.transbank.cl/webpayserver/initTransaction&quot; method=&quot;POST&quot;>
+        <pre><code class="language-html"
+                   th:text="'<form action=&quot;https://webpay3gint.transbank.cl/webpayserver/initTransaction&quot; method=&quot;POST&quot;>
     <input type=&quot;hidden&quot; name=&quot;token_ws&quot; value=&quot;01ab2e983627734baa78733a85cc6aeeae03d03d55def255e7475468b432ae49&quot; />
     <input type=&quot;submit&quot; value=&quot;Pagar&quot; />
 </form>'"></code></pre>
@@ -54,15 +55,7 @@ var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
             datos para configurar la transacción:
         </p>
 
-        <div class="tbk-table mb-32">
-            <div class="table-column tbk-head">Parámetro</div>
-            <div class="table-column tbk-head">Valor</div>
-
-            <th:block th:each="entry : ${request}">
-                <div class="table-column" th:text="${entry.key}"></div>
-                <div class="table-column" th:text="${entry.value}"></div>
-            </th:block>
-        </div>
+        <div th:replace="~{partials/table :: table(${request})}"></div>
 
         <p class="mb-32">
             Por último, con la respuesta del servicio que confirma la creación
@@ -71,13 +64,13 @@ var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
             es esencial para completar el proceso de pago de manera exitosa.
         </p>
         <span
-            >Antes de continuar al formulario de Webpay, asegúrate de contar con
+        >Antes de continuar al formulario de Webpay, asegúrate de contar con
             los datos de las tarjetas de prueba que están en la
             <a
-                href="https://transbankdevelopers.cl/documentacion/como_empezar#tarjetas-de-prueba"
-                target="_blank"
-                class="tbk-link"
-                >documentación.</a
+                    href="https://transbankdevelopers.cl/documentacion/como_empezar#tarjetas-de-prueba"
+                    target="_blank"
+                    class="tbk-link"
+            >documentación.</a
             ></span
         >
 
@@ -85,10 +78,10 @@ var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
             <div class="tbk-card">
                 <span class="tbk-card-title">Formulario de redirección</span>
                 <input
-                    type="text"
-                    class="tbk-input-text"
-                    name="token_ws"
-                    th:value="${response_data.token}"
+                        type="text"
+                        class="tbk-input-text"
+                        name="token_ws"
+                        th:value="${response_data.token}"
                 />
                 <div class="tbk-card-footer">
                     <button class="tbk-button primary">PAGAR</button>

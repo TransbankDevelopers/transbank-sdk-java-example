@@ -1,0 +1,63 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Webpay Plus Diferido - Captura de transacción</h1>
+        <p class="mb-32">
+            En este paso debemos capturar la transacción para realmente capturar el dinero que habia sido previamente
+            reservado al hacer la transacción
+        </p>
+
+        <h2 id="request">Paso 1: Petición</h2>
+        <p class="mb-32">
+            Para capturar una transacción necesitaremos el Token, Orden de compra, Código de autorización y monto a
+            capturar. Se hace de la siguiente manera.
+        </p>
+
+        <pre><code class="language-java">
+final var response = tx.capture(token, buyOrder, authorizationCode, amount);
+        </code></pre>
+
+        <h2 class="mt-32" id="response">Paso 2: Respuesta</h2>
+        <p class="mb-32">
+            Transbank contestará con lo siguiente. Debes guardar esta información, lo único que debes validar
+            es que response_code sea igual a cero.
+        </p>
+
+        <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
+
+        <h2 class="mb-32 mt-32" id="operations">
+            Otras utilidades
+        </h2>
+        <p class="mb-32">
+            Luego de capturada la transacción puedes Reembolsar (reversar o anular) el pago dependiendo de
+            ciertas condiciones comerciales. También puedes consultar el estado de la transacción hasta 7 días después
+            de
+            realizada.
+        </p>
+
+        <form action="/webpay-plus-deferred/refund" method="GET">
+            <div class="tbk-refund-card mb-32">
+                <div class="input-container">
+                    <label for="amount" class="tbk-label"
+                    >Monto a reembolsar:</label
+                    >
+                    <input
+                            type="text"
+                            name="amount"
+                            class="tbk-input-text"
+                            th:value="${response_data.capturedAmount}"
+                    />
+                    <input
+                            type="hidden"
+                            name="token_ws"
+                            th:value="${token}"
+                    />
+                </div>
+                <div class="tbk-refund-button-container">
+                    <button class="tbk-button primary">REEMBOLSAR</button>
+                    <a th:href="@{/webpay-plus-deferred/status(token_ws=${token})}"
+                       class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

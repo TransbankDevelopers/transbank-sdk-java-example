@@ -1,0 +1,23 @@
+<div class="mb-32" th:fragment="table(data)">
+    <div class="tbk-table">
+        <div class="table-column tbk-head">Campo</div>
+        <div class="table-column tbk-head">Valor</div>
+
+        <th:block th:each="entry : ${data}">
+            <div class="table-column" th:text="${entry.key}"></div>
+            <div class="table-column" th:if="${entry.key != 'details'}" th:text="${entry.value}"></div>
+            <div class="table-column" th:if="${entry.key == 'details'}">
+                <th:block th:each="detail : ${entry.value}">
+                    <div class="details-item">
+                        <div th:each="det : ${detail}">
+                            <div>
+                                <strong th:text="${det.key}"></strong>:
+                                <span th:text="${det.value}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </th:block>
+    </div>
+</div>

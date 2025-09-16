@@ -1,6 +1,6 @@
 <div th:replace="~{layout :: layout(~{::content})}">
     <div th:fragment="content">
-        <h1>Webpay Plus - Reembolsar</h1>
+        <h1>Webpay Plus Diferido - Reembolsar</h1>
         <p class="mb-32">
             En esta etapa, tienes la opción de solicitar el reembolso del monto
             al titular de la tarjeta. Dependiendo del monto y el tiempo
@@ -42,10 +42,9 @@
 
         <p class="mb-32">
             En
-            <a
-                    href="https://www.transbankdevelopers.cl/producto/webpay#anulaciones-y-reversas"
-                    target="_blank"
-                    class="tbk-link"
+            <a href="https://www.transbankdevelopers.cl/producto/webpay#anulaciones-y-reversas"
+               target="_blank"
+               class="tbk-link"
             >este link
             </a>
             podrás ver mayor información sobre las condiciones y casos para
@@ -66,9 +65,8 @@ final var response = tx.refund(token, amount);
             <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
         </div>
 
-        <a
-                th:href="@{/webpay-plus/status(token_ws=${token})}"
-                class="tbk-button primary mb-32"
+        <a th:href="@{/webpay-plus-deferred/status(token_ws=${token})}"
+           class="tbk-button primary mb-32"
         >CONSULTAR ESTADO</a
         >
     </div>

@@ -4,52 +4,82 @@ import cl.transbank.common.IntegrationApiKeys;
 import cl.transbank.common.IntegrationCommerceCodes;
 import cl.transbank.common.IntegrationType;
 import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.exception.TransactionCommitException;
+import cl.transbank.webpay.exception.TransactionCreateException;
+import cl.transbank.webpay.exception.TransactionRefundException;
+import cl.transbank.webpay.exception.TransactionStatusException;
 import cl.transbank.webpay.webpayplus.WebpayPlus;
-import cl.transbank.webpay.webpayplus.responses.WebpayPlusTransactionCommitResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Log4j2
 @Controller
-@RequestMapping("/webpay_plus")
+@RequestMapping("/webpay-plus")
 public class WebpayPlusController extends BaseController {
+    private static final String TEMPLATE_FOLDER = "webpay_plus";
+    private static final String BASE_URL = "/webpay-plus";
 
-    private WebpayPlus.Transaction tx;
+    private static final String VIEW_CREATE = TEMPLATE_FOLDER + "/create";
+    private static final String VIEW_COMMIT = TEMPLATE_FOLDER + "/commit";
+    private static final String VIEW_STATUS = TEMPLATE_FOLDER + "/status";
+    private static final String VIEW_REFUND = TEMPLATE_FOLDER + "/refund";
+
+    private static final Map<String, String> NAV_CREATE;
+    private static final Map<String, String> NAV_COMMIT;
+    private static final Map<String, String> NAV_STATUS;
+    private static final Map<String, String> NAV_REFUND;
+
+    static {
+        NAV_CREATE = new LinkedHashMap<>();
+        NAV_CREATE.put("request", "Petición");
+        NAV_CREATE.put("response", "Respuesta");
+        NAV_CREATE.put("form", "Formulario");
+
+        NAV_COMMIT = new LinkedHashMap<>();
+        NAV_COMMIT.put("data", "Datos recibidos");
+        NAV_COMMIT.put("request", "Petición");
+        NAV_COMMIT.put("response", "Respuesta");
+        NAV_COMMIT.put("operations", "¡Listo!");
+
+        NAV_STATUS = new LinkedHashMap<>();
+        NAV_STATUS.put("request", "Petición");
+        NAV_STATUS.put("response", "Respuesta");
+
+        NAV_REFUND = NAV_STATUS;
+    }
+
+    private final WebpayPlus.Transaction tx;
 
     public WebpayPlusController() {
-        tx = new WebpayPlus.Transaction(new WebpayOptions(IntegrationCommerceCodes.WEBPAY_PLUS,
-                IntegrationApiKeys.WEBPAY, IntegrationType.TEST));
+        this.tx = new WebpayPlus.Transaction(
+                new WebpayOptions(
+                        IntegrationCommerceCodes.WEBPAY_PLUS,
+                        IntegrationApiKeys.WEBPAY,
+                        IntegrationType.TEST
+                )
+        );
+    }
+
+    private void addBreadcrumbs(Model model, String label, String url) {
+        var breadcrumbs = new LinkedHashMap<String, String>();
+        breadcrumbs.put("Inicio", "/");
+        breadcrumbs.put("Webpay Plus", BASE_URL + "/create");
+        if (label != null)
+            breadcrumbs.put(label, url);
+        model.addAttribute("breadcrumbs", breadcrumbs);
     }
 
     @GetMapping("/create")
-    public String createPage(HttpServletRequest req, Model model) {
-        Map<String, String> navigation = new LinkedHashMap<>() {
-            {
-                put("request", "Petición");
-                put("response", "Respuesta");
-                put("form", "Formulario");
-            }
-        };
-        model.addAttribute("navigation", navigation);
-
-        Map<String, String> breadcrumbs = new LinkedHashMap<>() {
-            {
-                put("Inicio", "/");
-                put("Webpay Plus", "/webpay_plus/create");
-            }
-        };
-        model.addAttribute("breadcrumbs", breadcrumbs);
+    public String create(HttpServletRequest req, Model model) throws TransactionCreateException, IOException {
+        model.addAttribute("navigation", NAV_CREATE);
+        addBreadcrumbs(model, null, null);
 
         String buyOrder = "buyOrder_" + getRandomNumber();
         String sessionId = "sessionId_" + getRandomNumber();
@@ -60,146 +90,91 @@ public class WebpayPlusController extends BaseController {
                 "buyOrder", buyOrder,
                 "sessionId", sessionId,
                 "amount", amount,
-                "returnUrl", returnUrl);
+                "returnUrl", returnUrl
+        );
         model.addAttribute("request", request);
-        try {
-            var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
-            model.addAttribute("response_data", resp);
-            model.addAttribute("response_data_json", toJson(resp));
-        } catch (Exception e) {
-            log.error("ERROR", e);
-        }
-        return "webpay_plus/create";
+
+        var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
+        model.addAttribute("response_data", resp);
+        model.addAttribute("response_data_json", toJson(resp));
+
+        return VIEW_CREATE;
     }
 
-    @RequestMapping(value = "/commit", method = { RequestMethod.GET, RequestMethod.POST })
+    @GetMapping(value = "/commit")
     public String commit(
             HttpServletRequest req,
             @RequestParam(name = "token_ws", required = false) String tokenWs,
             @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
             @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String tbkBuyOrder,
             @RequestParam(name = "TBK_ID_SESION", required = false) String tbkSessionId,
-            Model model) {
+            Model model) throws TransactionCommitException, IOException {
+        return commitBase(req, tokenWs, tbkToken, tbkBuyOrder, tbkSessionId, model);
+    }
 
-        Map<String, String> navigation = new LinkedHashMap<>() {
-            {
-                put("data", "Datos recibidos");
-                put("request", "Petición");
-                put("response", "Respuesta");
-                put("operations", "¡Listo!");
-            }
-        };
-        model.addAttribute("navigation", navigation);
+    @PostMapping(value = "/commit")
+    public String commitPost(
+            HttpServletRequest req,
+            @RequestParam(name = "token_ws", required = false) String tokenWs,
+            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
+            @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String tbkBuyOrder,
+            @RequestParam(name = "TBK_ID_SESION", required = false) String tbkSessionId,
+            Model model) throws TransactionCommitException, IOException {
+        return commitBase(req, tokenWs, tbkToken, tbkBuyOrder, tbkSessionId, model);
+    }
 
-        Map<String, String> breadcrumbs = new LinkedHashMap<>() {
-            {
-                put("Inicio", "/");
-                put("Webpay Plus", "/webpay_plus/create");
-                put("Confirmar transacción", "#");
-            }
-        };
-        model.addAttribute("breadcrumbs", breadcrumbs);
+    public String commitBase(
+            HttpServletRequest req,
+            String tokenWs,
+            String tbkToken,
+            String tbkBuyOrder,
+            String tbkSessionId,
+            Model model) throws TransactionCommitException, IOException {
 
-        Map<String, Object> details = new HashMap<>();
-        model.addAttribute("details", details);
+        model.addAttribute("navigation", NAV_COMMIT);
+        addBreadcrumbs(model, "Confirmar transacción", "#");
 
-        // TODO: Aborted by user flow
+        var resp = tx.commit(tokenWs);
+        model.addAttribute("token", tokenWs);
+        model.addAttribute("returnUrl", req.getRequestURL().toString());
+        model.addAttribute("response_data", resp);
+        model.addAttribute("response_data_json", toJson(resp));
 
-        // TODO: Timeout flow
-
-        // Normal flow
-        log.info(String.format("token_ws : %s", tokenWs));
-        details.put("token_ws", tokenWs);
-        details.put("commit_url", req.getRequestURL().toString());
-
-        try {
-            final WebpayPlusTransactionCommitResponse response = tx.commit(tokenWs);
-            log.debug(String.format("response : %s", response));
-
-            details.put("response", response);
-            details.put("amount", (int) response.getAmount());
-            details.put("resp", toJson(response));
-            details.put("refund-endpoint", "/webpay_plus/refund");
-            details.put("status-endpoint", "/webpay_plus/status");
-
-        } catch (Exception e) {
-            log.error("ERROR", e);
-            details.put("resp", e.getMessage());
-        }
-
-        return "webpay_plus/commit";
+        return VIEW_COMMIT;
     }
 
     @GetMapping("/status")
-    public String status(@RequestParam("token_ws") String token, Model model) {
-        Map<String, String> navigation = new LinkedHashMap<>() {
-            {
-                put("request", "Petición");
-                put("response", "Respuesta");
-            }
-        };
-        model.addAttribute("navigation", navigation);
+    public String status(@RequestParam("token_ws") String token, Model model)
+            throws IOException, TransactionStatusException {
+        model.addAttribute("navigation", NAV_STATUS);
+        addBreadcrumbs(model, "Consultar estado de transacción", "#");
 
-        Map<String, String> breadcrumbs = new LinkedHashMap<>() {
-            {
-                put("Inicio", "/");
-                put("Webpay Plus", "/webpay_plus/create");
-                put("Consultar estado de transacción", "#");
-            }
-        };
-        model.addAttribute("breadcrumbs", breadcrumbs);
+        final var resp = tx.status(token);
+        model.addAttribute("response_data_json", toJson(resp));
 
-        Map<String, Object> details = new HashMap<>();
-        model.addAttribute("details", details);
-        details.put("token_ws", token);
-
-        try {
-            final var response = tx.status(token);
-            details.put("resp", toJson(response));
-        } catch (Exception e) {
-            log.error("ERROR", e);
-            details.put("resp", e.getMessage());
-        }
-
-        return "webpay_plus/status";
+        return VIEW_STATUS;
     }
 
-    @PostMapping("/refund")
+    @GetMapping("/refund")
     public String refund(@RequestParam("token_ws") String token,
-            @RequestParam("amount") double amount,
-            Model model) {
-        log.info(String.format("token_ws : %s | amount : %s", token, amount));
+                         @RequestParam("amount") double amount,
+                         Model model) throws TransactionRefundException, IOException {
 
-        Map<String, String> navigation = new LinkedHashMap<>() {
-            {
-                put("request", "Petición");
-                put("response", "Respuesta");
-            }
-        };
-        model.addAttribute("navigation", navigation);
+        model.addAttribute("navigation", NAV_REFUND);
+        addBreadcrumbs(model, "Reembolsar", "#");
+        model.addAttribute("token", token);
 
-        Map<String, String> breadcrumbs = new LinkedHashMap<>() {
-            {
-                put("Inicio", "/");
-                put("Webpay Plus", "/webpay-plus/create");
-                put("Reembolsar", "#");
-            }
-        };
-        model.addAttribute("breadcrumbs", breadcrumbs);
+        final var resp = tx.refund(token, amount);
+        model.addAttribute("response_data_json", toJson(resp));
 
-        Map<String, Object> details = new HashMap<>();
-        model.addAttribute("details", details);
-        details.put("token_ws", token);
+        return VIEW_REFUND;
+    }
 
-        try {
-            final var response = tx.refund(token, amount);
-            details.put("resp", toJson(response));
-        } catch (Exception e) {
-            log.error("ERROR", e);
-            details.put("resp", e.getMessage());
-        }
-
-        return "webpay_plus/refund";
+    @ExceptionHandler(Exception.class)
+    public String handleException(Exception e, Model model) {
+        log.error("Error inesperado", e);
+        model.addAttribute("errorMessage", "Ocurrió un error inesperado.");
+        return "error";
     }
 
 }
