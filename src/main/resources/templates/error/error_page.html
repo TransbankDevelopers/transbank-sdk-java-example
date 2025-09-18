@@ -9,14 +9,14 @@
                                     target="_blank">slack</a>
             </p>
 
-            <div class="table-column" th:if="${error}">
+            <div class="table-column mb-32" th:if="${error}">
                 <p>Detalles del error (solo para depuración):</p>
                 <div class="error-details">
-                    <%= error %>
+                    <div class="error-details" th:text="${error}"></div>
                 </div>
             </div>
 
-            <%= link_to 'Volver al inicio', root_path, class: 'tbk-button primary mb-32' %>
+            <a th:href="@{/}" class="tbk-button primary mb-32">Volver al inicio</a>
         </div>
 
     </div>
