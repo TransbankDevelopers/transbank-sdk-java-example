@@ -106,29 +106,32 @@ public class WebpayPlusController extends BaseController {
     @GetMapping(value = "/commit")
     public String commit(
             HttpServletRequest req,
+            @RequestParam Map<String, String> params,
             @RequestParam(name = "token_ws", required = false) String tokenWs,
             @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
             Model model) throws TransactionCommitException, IOException, TransactionStatusException {
-        return commitBase(req, tokenWs, tbkToken, model);
+        return commitBase(req, params, tokenWs, tbkToken, model);
     }
 
     @PostMapping(value = "/commit")
     public String commitPost(
             HttpServletRequest req,
+            @RequestParam Map<String, String> params,
             @RequestParam(name = "token_ws", required = false) String tokenWs,
             @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
             Model model) throws TransactionCommitException, IOException, TransactionStatusException {
-        return commitBase(req, tokenWs, tbkToken, model);
+        return commitBase(req, params, tokenWs, tbkToken, model);
     }
 
     public String commitBase(
             HttpServletRequest req,
+            Map<String, String> params,
             String tokenWs,
             String tbkToken,
             Model model) throws TransactionCommitException, IOException, TransactionStatusException {
 
         String viewTemplate = VIEW_COMMIT;
-        model.addAttribute("request_data_json", toJson(req.getParameterMap()));
+        model.addAttribute("request_data_json", toJson(params));
         model.addAttribute("navigation", NAV_COMMIT);
         addProductAndBreadcrumbs(model, "Confirmar transacción", "#");
 
