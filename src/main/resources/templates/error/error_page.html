@@ -1,0 +1,23 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+
+        <div class="error-container">
+            <h1>¡Ups! Algo salió mal</h1>
+            <p class="mb-32">Lo sentimos, ha ocurrido un error inesperado. si el Problema persiste comunicate con
+                nosotros en
+                nuestro canal de <a class="tbk-link" href="https://transbank.continuumhq.dev/slack_community"
+                                    target="_blank">slack</a>
+            </p>
+
+            <div class="table-column" th:if="${error}">
+                <p>Detalles del error (solo para depuración):</p>
+                <div class="error-details">
+                    <%= error %>
+                </div>
+            </div>
+
+            <%= link_to 'Volver al inicio', root_path, class: 'tbk-button primary mb-32' %>
+        </div>
+
+    </div>
+</div>
