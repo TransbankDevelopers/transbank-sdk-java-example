@@ -105,28 +105,23 @@ public class WebpayPlusDeferredController extends BaseController {
         return VIEW_CREATE;
     }
 
-    @GetMapping(value = "/commit")
-    public String commit(
-            HttpServletRequest req,
-            @RequestParam(name = "token_ws", required = false) String tokenWs,
-            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
-            Model model) throws TransactionCommitException, IOException, TransactionStatusException {
-        return commitBase(req, tokenWs, tbkToken, model);
-    }
-
     @PostMapping(value = "/commit")
     public String commitPost(
             HttpServletRequest req,
-            @RequestParam(name = "token_ws", required = false) String tokenWs,
-            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
-            Model model) throws TransactionCommitException, IOException, TransactionStatusException {
-        return commitBase(req, tokenWs, tbkToken, model);
+            @RequestParam Map<String, String> params,
+            Model model) {
+        model.addAttribute("request_data_json", toJson(params));
+        model.addAttribute("navigation", NAV_COMMIT);
+        addProductAndBreadcrumbs(model, "Confirmar transacción", "#");
+        return VIEW_FORM_ERROR;
     }
 
-    public String commitBase(
+    @GetMapping(value = "/commit")
+    public String commit(
             HttpServletRequest req,
-            String tokenWs,
-            String tbkToken,
+            @RequestParam Map<String, String> params,
+            @RequestParam(name = "token_ws", required = false) String tokenWs,
+            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
             Model model) throws TransactionCommitException, IOException, TransactionStatusException {
 
         String viewTemplate = VIEW_COMMIT;
