@@ -1,0 +1,24 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+
+        <h1 id="error" th:text="${product} + ' - Error en formulario de pago'"></h1>
+
+        <p class="mb-32">
+            Se ha producido un error en el formulario de pago. Si ha hecho clic
+            en el botón "Intentar nuevamente" desde la pantalla de error
+            después de cerrar inesperadamente la pestaña del navegador y trata
+            de recuperarla, es posible que haya recibido los siguientes tokens:
+            token_ws, TBK_TOKEN, TBK_ID_SESION, TBK_ORDEN_COMPRA.
+        </p>
+
+        <h2>Datos recibidos:</h2>
+        <p class="m-32">
+            Al producirse un error en el formulario de pago, recibirás un POST con la siguiente información:
+        </p>
+
+        <pre class="mb-32">
+<code class="language-json" th:text="${request_data_json}"></code>
+        </pre>
+
+    </div>
+</div>

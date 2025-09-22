@@ -22,6 +22,7 @@ import java.util.Map;
 public class WebpayPlusDeferredController extends BaseController {
     private static final String TEMPLATE_FOLDER = "webpay_plus_deferred";
     private static final String BASE_URL = "/webpay-plus-deferred";
+    private static final String PRODUCT = "Webpay Plus Diferido";
 
     private static final String VIEW_CREATE = TEMPLATE_FOLDER + "/create";
     private static final String VIEW_COMMIT = TEMPLATE_FOLDER + "/commit";
@@ -68,20 +69,21 @@ public class WebpayPlusDeferredController extends BaseController {
         );
     }
 
-    private void addBreadcrumbs(Model model, String label, String url) {
+    private void addProductAndBreadcrumbs(Model model, String label, String url) {
         var breadcrumbs = new LinkedHashMap<String, String>();
         breadcrumbs.put("Inicio", "/");
-        breadcrumbs.put("Webpay Plus Diferido", BASE_URL + "/create");
+        breadcrumbs.put(PRODUCT, BASE_URL + "/create");
         if (label != null) {
             breadcrumbs.put(label, url);
         }
+        model.addAttribute("product", PRODUCT);
         model.addAttribute("breadcrumbs", breadcrumbs);
     }
 
     @GetMapping("/create")
     public String create(HttpServletRequest req, Model model) throws TransactionCreateException, IOException {
         model.addAttribute("navigation", NAV_CREATE);
-        addBreadcrumbs(model, null, null);
+        addProductAndBreadcrumbs(model, null, null);
 
         String buyOrder = "buyOrder_" + getRandomNumber();
         String sessionId = "sessionId_" + getRandomNumber();
@@ -103,53 +105,53 @@ public class WebpayPlusDeferredController extends BaseController {
         return VIEW_CREATE;
     }
 
-    @GetMapping(value = "/commit")
-    public String commit(
-            HttpServletRequest req,
-            @RequestParam(name = "token_ws", required = false) String tokenWs,
-            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
-            @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String tbkBuyOrder,
-            @RequestParam(name = "TBK_ID_SESION", required = false) String tbkSessionId,
-            Model model) throws TransactionCommitException, IOException {
-        return commitBase(req, tokenWs, tbkToken, tbkBuyOrder, tbkSessionId, model);
-    }
-
     @PostMapping(value = "/commit")
     public String commitPost(
             HttpServletRequest req,
-            @RequestParam(name = "token_ws", required = false) String tokenWs,
-            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
-            @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String tbkBuyOrder,
-            @RequestParam(name = "TBK_ID_SESION", required = false) String tbkSessionId,
-            Model model) throws TransactionCommitException, IOException {
-        return commitBase(req, tokenWs, tbkToken, tbkBuyOrder, tbkSessionId, model);
+            @RequestParam Map<String, String> params,
+            Model model) {
+        model.addAttribute("request_data_json", toJson(params));
+        model.addAttribute("navigation", NAV_COMMIT);
+        addProductAndBreadcrumbs(model, "Confirmar transacción", "#");
+        return VIEW_FORM_ERROR;
     }
 
-    public String commitBase(
+    @GetMapping(value = "/commit")
+    public String commit(
             HttpServletRequest req,
-            String tokenWs,
-            String tbkToken,
-            String tbkBuyOrder,
-            String tbkSessionId,
-            Model model) throws TransactionCommitException, IOException {
+            @RequestParam Map<String, String> params,
+            @RequestParam(name = "token_ws", required = false) String tokenWs,
+            @RequestParam(name = "TBK_TOKEN", required = false) String tbkToken,
+            Model model) throws TransactionCommitException, IOException, TransactionStatusException {
 
+        String viewTemplate = VIEW_COMMIT;
+        model.addAttribute("request_data_json", toJson(req.getParameterMap()));
         model.addAttribute("navigation", NAV_COMMIT);
-        addBreadcrumbs(model, "Confirmar transacción", "#");
+        addProductAndBreadcrumbs(model, "Confirmar transacción", "#");
 
-        var resp = tx.commit(tokenWs);
-        model.addAttribute("token", tokenWs);
-        model.addAttribute("returnUrl", req.getRequestURL().toString());
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
-
-        return VIEW_COMMIT;
+        if (tbkToken != null && tokenWs != null) {
+            viewTemplate = VIEW_FORM_ERROR;
+        } else if (tbkToken != null) {
+            viewTemplate = VIEW_ABORTED_ERROR;
+            var resp = tx.status(tbkToken);
+            model.addAttribute("response_data_json", toJson(resp));
+        } else if (tokenWs != null) {
+            var resp = tx.commit(tokenWs);
+            model.addAttribute("token", tokenWs);
+            model.addAttribute("returnUrl", req.getRequestURL().toString());
+            model.addAttribute("response_data", resp);
+            model.addAttribute("response_data_json", toJson(resp));
+        } else {
+            viewTemplate = VIEW_TIMEOUT_ERROR;
+        }
+        return viewTemplate;
     }
 
     @GetMapping("/status")
     public String status(@RequestParam("token_ws") String token, Model model)
             throws IOException, TransactionStatusException {
         model.addAttribute("navigation", NAV_STATUS);
-        addBreadcrumbs(model, "Consultar estado de transacción", "#");
+        addProductAndBreadcrumbs(model, "Consultar estado de transacción", "#");
 
         final var resp = tx.status(token);
         model.addAttribute("response_data_json", toJson(resp));
@@ -165,7 +167,7 @@ public class WebpayPlusDeferredController extends BaseController {
                           Model model) throws TransactionCaptureException, IOException {
 
         model.addAttribute("navigation", NAV_CAPTURE);
-        addBreadcrumbs(model, "Capturar", "#");
+        addProductAndBreadcrumbs(model, "Capturar", "#");
         model.addAttribute("token", token);
 
         final var resp = tx.capture(token, buyOrder, authorizationCode, amount);
@@ -181,7 +183,7 @@ public class WebpayPlusDeferredController extends BaseController {
                          Model model) throws TransactionRefundException, IOException {
 
         model.addAttribute("navigation", NAV_REFUND);
-        addBreadcrumbs(model, "Reembolsar", "#");
+        addProductAndBreadcrumbs(model, "Reembolsar", "#");
         model.addAttribute("token", token);
 
         final var resp = tx.refund(token, amount);
@@ -193,8 +195,7 @@ public class WebpayPlusDeferredController extends BaseController {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
         log.error("Error inesperado", e);
-        model.addAttribute("errorMessage", "Ocurrió un error inesperado.");
-        return "error";
+        model.addAttribute("error", e.getMessage());
+        return VIEW_ERROR;
     }
 }
-
