@@ -43,10 +43,12 @@ var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
         </p>
 
         <pre><code class="language-html"
-                   th:text="'<form action=&quot;https://webpay3gint.transbank.cl/webpayserver/initTransaction&quot; method=&quot;POST&quot;>
-    <input type=&quot;hidden&quot; name=&quot;token_ws&quot; value=&quot;01ab2e983627734baa78733a85cc6aeeae03d03d55def255e7475468b432ae49&quot; />
+   th:text="'<form action=&quot;https://webpay3gint.transbank.cl/webpayserver/initTransaction&quot; method=&quot;POST&quot;>
+    <input type=&quot;hidden&quot; name=&quot;token_ws&quot; value=&quot;' + ${response_data.token} + '&quot; />
     <input type=&quot;submit&quot; value=&quot;Pagar&quot; />
-</form>'"></code></pre>
+</form>'">
+</code></pre>
+
 
         <h2 class="mt-32" id="example">Ejemplo</h2>
         <p class="mb-32">
