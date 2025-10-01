@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cl.transbank.webpay</groupId>
-	<artifactId>example</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>example</name>
+	<artifactId>transbank-sdk-java-example</artifactId>
+	<version>1.0.0</version>
+	<name>transbank-sdk-java-example</name>
 	<description>Proyecto de Ejemplo SDK JAVA</description>
 	<url/>
 	<licenses>
