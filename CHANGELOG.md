@@ -1,4 +1,4 @@
-# Changelog
+# Historial de cambios
 
 Toda la historia de cambios de este proyecto será documentada en este archivo.
 
@@ -9,7 +9,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 Versión inicial del proyecto de ejemplo.
 
-### Added
+### Agrega
 
 -   Estructura inicial del proyecto con Maven.
 -   Documentación inicial en `README.md` con instrucciones de instalación y uso.
