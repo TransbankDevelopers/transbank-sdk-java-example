@@ -139,7 +139,6 @@ public class OneclickMallDeferredController extends BaseController {
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
         String username = (String) req.getSession().getAttribute("username");
-        String email = (String) req.getSession().getAttribute("email");
 
         var resp = inscription.finish(token);
 
