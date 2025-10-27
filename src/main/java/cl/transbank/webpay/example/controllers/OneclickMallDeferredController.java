@@ -41,7 +41,7 @@ public class OneclickMallDeferredController extends BaseController {
     private final Oneclick.MallTransaction transaction;
 
 
-    /*
+    
     private static final Map<String, String> NAV_START;
     private static final Map<String, String> NAV_FINISH;
     private static final Map<String, String> NAV_DELETE;
@@ -55,25 +55,30 @@ public class OneclickMallDeferredController extends BaseController {
         NAV_START.put("request", "Petición");
         NAV_START.put("response", "Respuesta");
         NAV_START.put("form", "Formulario");
+        NAV_START.put("example", "Ejemplo");
 
         NAV_FINISH = new LinkedHashMap<>();
-        NAV_FINISH.put("data", "Datos recibidos");
-        NAV_FINISH.put("request", "Petición");
+        NAV_FINISH.put("data", "Datos");
+        NAV_FINISH.put("response", "Petición");
         NAV_FINISH.put("response", "Respuesta");
-        NAV_FINISH.put("operations", "¡Listo!");
+        NAV_FINISH.put("authorize", "Autorizar una transacción");
 
-        NAV_COMMIT = new LinkedHashMap<>();
-        NAV_COMMIT.put("data", "Datos recibidos");
-        NAV_COMMIT.put("request", "Petición");
-        NAV_COMMIT.put("response", "Respuesta");
-        NAV_COMMIT.put("operations", "¡Listo!");
+        NAV_DELETE = new LinkedHashMap<>();
+        NAV_DELETE.put("data", "Borrar usuario");
+
+        NAV_AUTHORIZE = new LinkedHashMap<>();
+        NAV_AUTHORIZE.put("request", "Petición");
+        NAV_AUTHORIZE.put("response", "Respuesta");
+        NAV_AUTHORIZE.put("other", "Otras utilidades");
+
+        NAV_CAPTURE = NAV_AUTHORIZE;
 
         NAV_STATUS = new LinkedHashMap<>();
         NAV_STATUS.put("request", "Petición");
         NAV_STATUS.put("response", "Respuesta");
 
         NAV_REFUND = NAV_STATUS;
-    }*/
+    }
 
     public OneclickMallDeferredController() {
         var options = new WebpayOptions(
@@ -98,6 +103,7 @@ public class OneclickMallDeferredController extends BaseController {
     public String start(HttpServletRequest req, Model model)
             throws IOException, InscriptionStartException {
 
+        model.addAttribute("navigation", NAV_START);
         addBreadcrumbs(model, "Iniciar inscripción", "#");
 
         String username = "user_" + getRandomNumber();
@@ -129,6 +135,7 @@ public class OneclickMallDeferredController extends BaseController {
                          Model model)
             throws IOException, InscriptionFinishException {
 
+        model.addAttribute("navigation", NAV_FINISH);        
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
         String username = (String) req.getSession().getAttribute("username");
@@ -161,6 +168,7 @@ public class OneclickMallDeferredController extends BaseController {
                          Model model)
             throws IOException, InscriptionDeleteException {
 
+        model.addAttribute("navigation", NAV_DELETE); 
         addBreadcrumbs(model, "Eliminar inscripción", "#");
 
         inscription.delete(tbkUser, username);
@@ -182,6 +190,7 @@ public class OneclickMallDeferredController extends BaseController {
             Model model)
             throws IOException, TransactionAuthorizeException {
 
+        model.addAttribute("navigation", NAV_AUTHORIZE); 
         addBreadcrumbs(model, "Autorizar transacción", "#");
 
         String buyOrder = "buyOrder_" + getRandomNumber();
@@ -214,7 +223,8 @@ public class OneclickMallDeferredController extends BaseController {
     @GetMapping("/status")
     public String status(@RequestParam("buy_order") String buyOrder, Model model)
             throws IOException, TransactionStatusException {
-
+        
+        model.addAttribute("navigation", NAV_STATUS);        
         addBreadcrumbs(model, "Consultar estado", "#");
 
         var resp = transaction.status(buyOrder);
@@ -231,6 +241,7 @@ public class OneclickMallDeferredController extends BaseController {
                          Model model)
             throws IOException, TransactionRefundException {
 
+        model.addAttribute("navigation", NAV_REFUND);        
         addBreadcrumbs(model, "Reembolso", "#");
 
         model.addAttribute("buy_order", buyOrder);
@@ -250,6 +261,7 @@ public class OneclickMallDeferredController extends BaseController {
             Model model)
             throws IOException, TransactionCaptureException {
 
+        model.addAttribute("navigation", NAV_CAPTURE);        
         addBreadcrumbs(model, "Capturar", "#");
 
         model.addAttribute("buy_order", buyOrder);
