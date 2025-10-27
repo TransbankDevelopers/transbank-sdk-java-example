@@ -28,6 +28,9 @@ public class OneclickMallDeferredController extends BaseController {
     private static final String TEMPLATE_FOLDER = "oneclick_mall_deferred";
     private static final String BASE_URL = "/oneclick-mall-deferred";
     private static final String PRODUCT = "Oneclick Mall Diferido";
+    private static final String MODEL_NAVIGATION =  "navigation";
+    private static final String MODEL_RESPONSE =  "response_data";
+    private static final String MODEL_RESPONSE_JSON =  "response_data_json";
 
     private static final String VIEW_START = TEMPLATE_FOLDER + "/start";
     private static final String VIEW_FINISH = TEMPLATE_FOLDER + "/finish";
@@ -40,8 +43,6 @@ public class OneclickMallDeferredController extends BaseController {
     private final Oneclick.MallInscription inscription;
     private final Oneclick.MallTransaction transaction;
 
-
-    
     private static final Map<String, String> NAV_START;
     private static final Map<String, String> NAV_FINISH;
     private static final Map<String, String> NAV_DELETE;
@@ -103,7 +104,7 @@ public class OneclickMallDeferredController extends BaseController {
     public String start(HttpServletRequest req, Model model)
             throws IOException, InscriptionStartException {
 
-        model.addAttribute("navigation", NAV_START);
+        model.addAttribute(MODEL_NAVIGATION, NAV_START);
         addBreadcrumbs(model, "Iniciar inscripción", "#");
 
         String username = "user_" + getRandomNumber();
@@ -117,8 +118,8 @@ public class OneclickMallDeferredController extends BaseController {
                 "email", email,
                 "returnUrl", returnUrl
         ));
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
         model.addAttribute("url", resp.getUrlWebpay());
         model.addAttribute("token", resp.getToken());
 
@@ -134,7 +135,7 @@ public class OneclickMallDeferredController extends BaseController {
                          Model model)
             throws IOException, InscriptionFinishException {
 
-        model.addAttribute("navigation", NAV_FINISH);        
+        model.addAttribute(MODEL_NAVIGATION, NAV_FINISH);        
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
         String username = (String) req.getSession().getAttribute("username");
@@ -151,8 +152,8 @@ public class OneclickMallDeferredController extends BaseController {
         model.addAttribute("token", token);
         model.addAttribute("username", username);
         model.addAttribute("tbk_user", resp.getTbkUser());
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         model.addAttribute("child_commerce_code1", IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED_CHILD1);
         model.addAttribute("child_commerce_code2", IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED_CHILD2);
@@ -166,7 +167,7 @@ public class OneclickMallDeferredController extends BaseController {
                          Model model)
             throws IOException, InscriptionDeleteException {
 
-        model.addAttribute("navigation", NAV_DELETE); 
+        model.addAttribute(MODEL_NAVIGATION, NAV_DELETE); 
         addBreadcrumbs(model, "Eliminar inscripción", "#");
 
         inscription.delete(tbkUser, username);
@@ -188,7 +189,7 @@ public class OneclickMallDeferredController extends BaseController {
             Model model)
             throws IOException, TransactionAuthorizeException {
 
-        model.addAttribute("navigation", NAV_AUTHORIZE); 
+        model.addAttribute(MODEL_NAVIGATION, NAV_AUTHORIZE); 
         addBreadcrumbs(model, "Autorizar transacción", "#");
 
         String buyOrder = "buyOrder_" + getRandomNumber();
@@ -212,8 +213,8 @@ public class OneclickMallDeferredController extends BaseController {
 
         var resp = transaction.authorize(username, tbkUser, buyOrder, details);
 
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         return VIEW_AUTHORIZE;
     }
@@ -222,11 +223,11 @@ public class OneclickMallDeferredController extends BaseController {
     public String status(@RequestParam("buy_order") String buyOrder, Model model)
             throws IOException, TransactionStatusException {
         
-        model.addAttribute("navigation", NAV_STATUS);        
+        model.addAttribute(MODEL_NAVIGATION, NAV_STATUS);        
         addBreadcrumbs(model, "Consultar estado", "#");
 
         var resp = transaction.status(buyOrder);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         return VIEW_STATUS;
     }
@@ -239,12 +240,12 @@ public class OneclickMallDeferredController extends BaseController {
                          Model model)
             throws IOException, TransactionRefundException {
 
-        model.addAttribute("navigation", NAV_REFUND);        
+        model.addAttribute(MODEL_NAVIGATION, NAV_REFUND);        
         addBreadcrumbs(model, "Reembolso", "#");
 
         model.addAttribute("buy_order", buyOrder);
         var resp = transaction.refund(buyOrder, childCommerceCode, childBuyOrder, amount);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         return VIEW_REFUND;
     }
@@ -259,7 +260,7 @@ public class OneclickMallDeferredController extends BaseController {
             Model model)
             throws IOException, TransactionCaptureException {
 
-        model.addAttribute("navigation", NAV_CAPTURE);        
+        model.addAttribute(MODEL_NAVIGATION, NAV_CAPTURE);        
         addBreadcrumbs(model, "Capturar", "#");
 
         model.addAttribute("buy_order", buyOrder);
@@ -267,8 +268,8 @@ public class OneclickMallDeferredController extends BaseController {
         model.addAttribute("child_commerce_code", childCommerceCode);
 
         var resp = transaction.capture(childCommerceCode, childBuyOrder, authorizationCode, amount);
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         return VIEW_CAPTURE;
     }
