@@ -44,7 +44,7 @@ var resp = transaction.authorize(username, tbkUser, buyOrder, details);
         <p class="mb-32">
             Una vez que la transacción ha sido autorizada, Transbank proporcionará la siguiente información.
             Es fundamental conservar esta respuesta y verificar que el campo <b>responseCode</b> tenga un valor de
-            <code>0</code> y que el campo <b>status</b> sea <code>AUTHORIZED</code>.
+            0 y que el campo <b>status</b> sea AUTHORIZED.
         </p>
 
         <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
