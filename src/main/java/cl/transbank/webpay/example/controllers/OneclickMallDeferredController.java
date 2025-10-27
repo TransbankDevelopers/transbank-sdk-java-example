@@ -122,7 +122,6 @@ public class OneclickMallDeferredController extends BaseController {
         model.addAttribute("url", resp.getUrlWebpay());
         model.addAttribute("token", resp.getToken());
 
-        // Guardar en sesión
         req.getSession().setAttribute("username", username);
         req.getSession().setAttribute("email", email);
 
