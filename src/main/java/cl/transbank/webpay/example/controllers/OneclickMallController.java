@@ -40,6 +40,7 @@ public class OneclickMallController extends BaseController {
     private static final Map<String, String> NAV_STATUS;
     private static final Map<String, String> NAV_REFUND;
 
+
    
 
     static {
@@ -47,27 +48,28 @@ public class OneclickMallController extends BaseController {
         NAV_START.put("request", "Petición");
         NAV_START.put("response", "Respuesta");
         NAV_START.put("form", "Creación del formulario");
-        NAV_START.put("ejemplo", "Ejemplo");
+        NAV_START.put("example", "Ejemplo");
 
         NAV_FINISH = new LinkedHashMap<>();
-        NAV_FINISH.put("peticion", "Petición");
-        NAV_FINISH.put("respuesta", "Respuesta");
-        NAV_FINISH.put("form", "Creación del formulario");
-        NAV_FINISH.put("ejemplo", "Ejemplo");
+        NAV_FINISH.put("data", "Datos");
+        NAV_FINISH.put("request", "Petición");
+        NAV_FINISH.put("response", "Respuesta");
+        NAV_FINISH.put("authorize", "Autorizar una transacción");
 
         NAV_AUTHORIZE = new LinkedHashMap<>();
-        NAV_AUTHORIZE.put("peticion", "Petición");
-        NAV_AUTHORIZE.put("respuesta", "Respuesta");
-        NAV_AUTHORIZE.put("consultas", "Consultas");
+        NAV_AUTHORIZE.put("request", "Petición");
+        NAV_AUTHORIZE.put("response", "Respuesta");
+        NAV_AUTHORIZE.put("done", "listo");
 
         NAV_STATUS = new LinkedHashMap<>();
-        NAV_STATUS.put("peticion", "Petición");
-        NAV_STATUS.put("respuesta", "Respuesta");
+        NAV_STATUS.put("request", "Petición");
+        NAV_STATUS.put("response", "Respuesta");
 
-        NAV_DELETE= new LinkedHashMap<>();
-        NAV_DELETE.put("ejemplo", "Ejemplo");
+        NAV_DELETE = new LinkedHashMap<>();
+        NAV_DELETE.put("data", "Borrar usuario");
 
         NAV_REFUND = NAV_STATUS;
+
     }
 
      private final Oneclick.MallInscription inscription;
@@ -95,7 +97,7 @@ public class OneclickMallController extends BaseController {
     @GetMapping("/start")
     public String start(HttpServletRequest req, Model model)
             throws IOException, InscriptionStartException {
-
+        model.addAttribute("navigation", NAV_START);
         addBreadcrumbs(model, "Iniciar inscripción", "#");
 
         String username = "user_" + getRandomNumber();
@@ -131,6 +133,7 @@ public class OneclickMallController extends BaseController {
                          Model model)
             throws IOException, InscriptionFinishException {
 
+        model.addAttribute("navigation", NAV_FINISH);
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
         String username = (String) req.getSession().getAttribute("username");
@@ -162,6 +165,7 @@ public class OneclickMallController extends BaseController {
                          Model model)
             throws IOException, InscriptionDeleteException {
 
+        model.addAttribute("navigation", NAV_DELETE);
         addBreadcrumbs(model, "Eliminar inscripción", "#");
 
         inscription.delete(tbkUser, username);
@@ -183,6 +187,7 @@ public class OneclickMallController extends BaseController {
             Model model)
             throws IOException, TransactionAuthorizeException {
 
+        model.addAttribute("navigation", NAV_AUTHORIZE);
         addBreadcrumbs(model, "Autorizar transacción", "#");
 
         String buyOrder = "Order" + getRandomNumber();
@@ -216,6 +221,7 @@ public class OneclickMallController extends BaseController {
     public String status(@RequestParam("buy_order") String buyOrder, Model model)
             throws IOException, TransactionStatusException {
 
+        model.addAttribute("navigation", NAV_STATUS);
         addBreadcrumbs(model, "Consultar estado", "#");
 
         var resp = transaction.status(buyOrder);
@@ -231,7 +237,7 @@ public class OneclickMallController extends BaseController {
                          @RequestParam double amount,
                          Model model)
     throws IOException, TransactionRefundException {
-
+        model.addAttribute("navigation", NAV_REFUND);
         addBreadcrumbs(model, "Reembolso", "#");
         log.info("Iniciando reembolso para buy_order={}, child_buy_order={}, child_commerce_code={}, amount={}",
                 buyOrder, childBuyOrder, childCommerceCode, amount);
