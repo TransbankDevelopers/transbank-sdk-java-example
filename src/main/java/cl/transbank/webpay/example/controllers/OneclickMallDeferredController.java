@@ -60,7 +60,7 @@ public class OneclickMallDeferredController extends BaseController {
 
         NAV_FINISH = new LinkedHashMap<>();
         NAV_FINISH.put("data", "Datos");
-        NAV_FINISH.put("response", "Petición");
+        NAV_FINISH.put("request", "Petición");
         NAV_FINISH.put("response", "Respuesta");
         NAV_FINISH.put("authorize", "Autorizar una transacción");
 
