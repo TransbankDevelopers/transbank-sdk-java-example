@@ -58,6 +58,24 @@ var resp = transaction.authorize(username, tbkUser, buyOrder, details);
       ha completado con éxito.
     </p>
 
+    <div class="instructions">
+      <h2>Otras utilidades</h2>
+      <p class="mb-32">
+        Después de autorizar la transacción, considera las siguientes utilidades
+        adicionales:
+      </p>
+      <ul class="list">
+        <li>
+          <b>Reembolsar:</b> Puedes reversar o anular el pago según ciertas
+          condiciones comerciales.
+        </li>
+        <li>
+          <b>Consultar Estado:</b> Hasta 7 días después de realizada la
+          transacción, podrás consultar el estado de la transacción.
+        </li>
+      </ul>
+    </div>
+
     <div th:each="detail : ${response_data.details}">
       <form th:action="@{/oneclick-mall/refund}" method="get">
         <div class="tbk-card">
