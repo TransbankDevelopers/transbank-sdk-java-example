@@ -60,7 +60,7 @@ var resp = transaction.refund(buyOrder, childCommerceCode, childBuyOrder, amount
         <pre class="mb-32"><code class="language-json" th:text="${response_data_json}"></code></pre>
 
         <a class="tbk-button primary mb-32"
-           th:href="@{/oneclick-mall-diferido/status(buy_order=${buy_order})}">
+           th:href="@{/oneclick-mall-deferred/status(buy_order=${buy_order})}">
             CONSULTAR ESTADO
         </a>
 

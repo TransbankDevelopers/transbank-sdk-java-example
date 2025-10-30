@@ -58,7 +58,7 @@ var resp = transaction.authorize(username, tbkUser, buyOrder, details);
         </p>
 
         <div th:each="detail : ${response_data.details}">
-            <form th:action="@{/oneclick-mall-diferido/capture}" method="get">
+            <form th:action="@{/oneclick-mall-deferred/capture}" method="get">
                 <input type="hidden" name="buy_order" th:value="${response_data.buyOrder}"/>
 
                 <div class="tbk-card">
@@ -96,7 +96,7 @@ var resp = transaction.authorize(username, tbkUser, buyOrder, details);
         </div>
 
         <a class="tbk-button primary mb-32"
-           th:href="@{/oneclick-mall-diferido/status(buy_order=${response_data.buyOrder})}">
+           th:href="@{/oneclick-mall-deferred/status(buy_order=${response_data.buyOrder})}">
             CONSULTAR ESTADO
         </a>
 

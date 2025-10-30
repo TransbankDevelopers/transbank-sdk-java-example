@@ -51,7 +51,7 @@ var response = transaction.capture(childCommerceCode, childBuyOrder, authorizati
             obtener más detalles.
         </p>
 
-        <form th:action="@{/oneclick-mall-diferido/refund}" method="get">
+        <form th:action="@{/oneclick-mall-deferred/refund}" method="get">
             <input type="hidden" name="buy_order" th:value="${buy_order}"/>
             <input type="hidden" name="child_buy_order" th:value="${child_buy_order}"/>
             <input type="hidden" name="child_commerce_code" th:value="${child_commerce_code}"/>
@@ -71,7 +71,7 @@ var response = transaction.capture(childCommerceCode, childBuyOrder, authorizati
                 <div class="tbk-refund-button-container">
                     <button type="submit" class="tbk-button primary">REEMBOLSAR</button>
                     <a class="tbk-button primary"
-                       th:href="@{/oneclick-mall-diferido/status(buy_order=${buy_order})}">
+                       th:href="@{/oneclick-mall-deferred/status(buy_order=${buy_order})}">
                         CONSULTAR ESTADO
                     </a>
                 </div>

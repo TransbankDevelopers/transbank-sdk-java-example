@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Log4j2
 @Controller
-@RequestMapping("/oneclick-mall-diferido")
+@RequestMapping("/oneclick-mall-deferred")
 public class OneclickMallDeferredController extends BaseController {
 
     private static final String TEMPLATE_FOLDER = "oneclick_mall_deferred";
@@ -94,13 +94,13 @@ public class OneclickMallDeferredController extends BaseController {
     private void addBreadcrumbs(Model model, String label, String url) {
         Map<String, String> breadcrumbs = new LinkedHashMap<>();
         breadcrumbs.put("Inicio", "/");
-        breadcrumbs.put(PRODUCT, BASE_URL + "/start");
+        breadcrumbs.put(PRODUCT, BASE_URL + "/");
         if (label != null) breadcrumbs.put(label, url);
         model.addAttribute("product", PRODUCT);
         model.addAttribute("breadcrumbs", breadcrumbs);
     }
 
-    @GetMapping("/start")
+    @GetMapping("/")
     public String start(HttpServletRequest req, Model model)
             throws IOException, InscriptionStartException {
 
@@ -109,7 +109,7 @@ public class OneclickMallDeferredController extends BaseController {
 
         String username = "user_" + getRandomNumber();
         String email = "user." + getRandomNumber() + "@example.com";
-        String returnUrl = req.getRequestURL().toString().replace("start", "finish");
+        String returnUrl = req.getRequestURL().toString() + "finish";
 
         var resp = inscription.start(username, email, returnUrl);
 

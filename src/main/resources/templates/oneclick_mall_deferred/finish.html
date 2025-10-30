@@ -64,7 +64,7 @@ var response = inscription.finish(token);
             acaba de inscribir.
         </p>
 
-        <form th:action="@{/oneclick-mall-diferido/authorize}" method="get">
+        <form th:action="@{/oneclick-mall-deferred/authorize}" method="get">
             <input type="hidden" name="username" th:value="${username}"/>
             <input type="hidden" name="tbk_user" th:value="${tbk_user}"/>
             <input type="hidden" name="child_commerce_code1" th:value="${child_commerce_code1}"/>
@@ -101,7 +101,7 @@ var response = inscription.finish(token);
             </div>
         </form>
 
-        <a th:href="@{/oneclick-mall-diferido/delete(tbk_user=${tbk_user}, username=${username})}"
+        <a th:href="@{/oneclick-mall-deferred/delete(tbk_user=${tbk_user}, username=${username})}"
            class="tbk-button primary mt-16 mb-32">
             BORRAR USUARIO
         </a>
