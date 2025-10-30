@@ -23,7 +23,7 @@ import java.util.Map;
 public class OneclickMallController extends BaseController {
     private static final String TEMPLATE_FOLDER = "oneclick_mall";
     private static final String BASE_URL = "/oneclick-mall";
-    private static final String PRODUCT = "Oneclick Mall";
+    private static final String PRODUCT = "Webpay Oneclick Mall";
 
     private static final String VIEW_START = TEMPLATE_FOLDER + "/start";
     private static final String VIEW_FINISH = TEMPLATE_FOLDER + "/finish";
