@@ -25,6 +25,7 @@ import java.util.Map;
 @RequestMapping("/oneclick-mall-deferred")
 public class OneclickMallDeferredController extends BaseController {
 
+    private static final int AUTHORIZED = 0;
     private static final String TEMPLATE_FOLDER = "oneclick_mall_deferred";
     private static final String BASE_URL = "/oneclick-mall-deferred";
     private static final String PRODUCT = "Oneclick Mall Diferido";
@@ -45,6 +46,8 @@ public class OneclickMallDeferredController extends BaseController {
 
     private static final Map<String, String> NAV_START;
     private static final Map<String, String> NAV_FINISH;
+    private static final Map<String, String> NAV_FINISH_RECOVER;
+    private static final Map<String, String> NAV_FINISH_REJECTED;
     private static final Map<String, String> NAV_DELETE;
     private static final Map<String, String> NAV_AUTHORIZE;
     private static final Map<String, String> NAV_STATUS;
@@ -63,6 +66,14 @@ public class OneclickMallDeferredController extends BaseController {
         NAV_FINISH.put("request", "Petición");
         NAV_FINISH.put("response", "Respuesta");
         NAV_FINISH.put("authorize", "Autorizar una transacción");
+
+        NAV_FINISH_RECOVER = new LinkedHashMap<>();
+        NAV_FINISH_RECOVER.put("data", "Datos");
+
+        NAV_FINISH_REJECTED = new LinkedHashMap<>();
+        NAV_FINISH_REJECTED.put("data", "Datos");
+        NAV_FINISH_REJECTED.put("request", "Petición");
+        NAV_FINISH_REJECTED.put("response", "Respuesta");
 
         NAV_DELETE = new LinkedHashMap<>();
         NAV_DELETE.put("data", "Borrar usuario");
@@ -131,30 +142,40 @@ public class OneclickMallDeferredController extends BaseController {
 
     @GetMapping("/finish")
     public String finish(HttpServletRequest req,
+                         @RequestParam Map<String, String> params,
                          @RequestParam(name = "TBK_TOKEN", required = false) String token,
+                         @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String ordenCompra,
                          Model model)
             throws IOException, InscriptionFinishException {
 
         model.addAttribute(MODEL_NAVIGATION, NAV_FINISH);        
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
+        if (ordenCompra != null) {
+            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_RECOVER); 
+            model.addAttribute("request_data_json", toJson(params));
+            return VIEW_RECOVER_ERROR;
+        }
+
         String username = (String) req.getSession().getAttribute("username");
 
         var resp = inscription.finish(token);
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
+
+        if (resp.getResponseCode() != AUTHORIZED) {
+            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_REJECTED);
+            return VIEW_REJECTED_ERROR;
+        }
 
         req.getSession().setAttribute("tbkUser", resp.getTbkUser());
-
         model.addAttribute("request_data", Map.of(
                 "username", username,
                 "tbkUser", resp.getTbkUser()
         ));
-
         model.addAttribute("token", token);
         model.addAttribute("username", username);
         model.addAttribute("tbk_user", resp.getTbkUser());
-        model.addAttribute(MODEL_RESPONSE, resp);
-        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
-
         model.addAttribute("child_commerce_code1", IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED_CHILD1);
         model.addAttribute("child_commerce_code2", IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED_CHILD2);
 

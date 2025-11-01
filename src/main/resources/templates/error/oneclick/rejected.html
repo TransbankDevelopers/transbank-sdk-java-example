@@ -1,0 +1,46 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1 id="rejected" th:text="${product} + ' - Rechazo Bancario'"></h1>
+        <p class="mb-32">
+            En esta fase, pueden surgir inconvenientes, ya sea con el titular de la tarjeta o a nivel bancario, lo que
+            resulta en una inscripción fallida.
+        </p>
+
+        <h2 id="data">Paso 1: Datos recibidos</h2>
+        <p class="mb-32">
+            Después de finalizar el flujo en el formulario de inscripción, recibirás un GET con la siguiente información:
+        </p>
+        
+
+        <h2 id="request">Paso 2: Petición de autorización</h2>
+        <p class="mb-32">
+            Utiliza el token recibido para finalizar la Inscripción mediante una nueva llamada a Oneclick.
+        </p>
+
+        <pre><code class="language-java mb-32">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.oneclick.Oneclick;
+
+var options = new WebpayOptions(
+                IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED,
+                IntegrationApiKeys.WEBPAY,
+                IntegrationType.TEST
+        );
+var inscription = new Oneclick.MallInscription(options);
+var response = inscription.finish(token);
+    </code></pre>
+
+        <h2 id="response">Paso 3: Respuesta</h2>
+        <p class="mb-32">
+            Transbank responderá con la siguiente información.
+        </p>
+
+        <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
+
+
+        <p class="mt-32 mb-32">En este caso la inscripción fue rechazada, tendrás que repetir el proceso</p>
+    </div>
+</div>
