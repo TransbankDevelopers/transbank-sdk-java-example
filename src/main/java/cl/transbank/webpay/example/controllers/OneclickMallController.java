@@ -59,7 +59,7 @@ public class OneclickMallController extends BaseController {
         NAV_AUTHORIZE = new LinkedHashMap<>();
         NAV_AUTHORIZE.put("request", "Petición");
         NAV_AUTHORIZE.put("response", "Respuesta");
-        NAV_AUTHORIZE.put("done", "listo");
+        NAV_AUTHORIZE.put("done", "Listo");
 
         NAV_STATUS = new LinkedHashMap<>();
         NAV_STATUS.put("request", "Petición");
