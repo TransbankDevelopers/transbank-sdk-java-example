@@ -28,7 +28,7 @@ public class OneclickMallDeferredController extends BaseController {
     private static final int AUTHORIZED = 0;
     private static final String TEMPLATE_FOLDER = "oneclick_mall_deferred";
     private static final String BASE_URL = "/oneclick-mall-deferred";
-    private static final String PRODUCT = "Oneclick Mall Diferido";
+    private static final String PRODUCT = "Webpay Oneclick Mall Diferido";
     private static final String MODEL_NAVIGATION =  "navigation";
     private static final String MODEL_RESPONSE =  "response_data";
     private static final String MODEL_RESPONSE_JSON =  "response_data_json";
