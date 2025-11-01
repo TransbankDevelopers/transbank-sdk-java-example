@@ -23,7 +23,7 @@ import java.util.Map;
 public class OneclickMallController extends BaseController {
     private static final String TEMPLATE_FOLDER = "oneclick_mall";
     private static final String BASE_URL = "/oneclick-mall";
-    private static final String PRODUCT = "Oneclick Mall";
+    private static final String PRODUCT = "Webpay Oneclick Mall";
 
     private static final String VIEW_START = TEMPLATE_FOLDER + "/start";
     private static final String VIEW_FINISH = TEMPLATE_FOLDER + "/finish";
@@ -239,10 +239,7 @@ public class OneclickMallController extends BaseController {
     throws IOException, TransactionRefundException {
         model.addAttribute("navigation", NAV_REFUND);
         addBreadcrumbs(model, "Reembolso", "#");
-        log.info("Iniciando reembolso para buy_order={}, child_buy_order={}, child_commerce_code={}, amount={}",
-                buyOrder, childBuyOrder, childCommerceCode, amount);
-        log.error("Error en reembolso para buy_order={}, child_buy_order={}, child_commerce_code={}, amount={}",
-                buyOrder, childBuyOrder, childCommerceCode, amount);
+        
         model.addAttribute("buy_order", buyOrder);
         var resp = transaction.refund(buyOrder, childCommerceCode, childBuyOrder, amount);
         model.addAttribute("response_data_json", toJson(resp));
