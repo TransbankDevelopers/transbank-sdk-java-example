@@ -21,9 +21,14 @@ import java.util.Map;
 @Controller
 @RequestMapping("/oneclick-mall")
 public class OneclickMallController extends BaseController {
+
+    private static final int AUTHORIZED = 0;
     private static final String TEMPLATE_FOLDER = "oneclick_mall";
     private static final String BASE_URL = "/oneclick-mall";
     private static final String PRODUCT = "Webpay Oneclick Mall";
+    private static final String MODEL_NAVIGATION =  "navigation";
+    private static final String MODEL_RESPONSE =  "response_data";
+    private static final String MODEL_RESPONSE_JSON =  "response_data_json";
 
     private static final String VIEW_START = TEMPLATE_FOLDER + "/start";
     private static final String VIEW_FINISH = TEMPLATE_FOLDER + "/finish";
@@ -35,6 +40,8 @@ public class OneclickMallController extends BaseController {
 
     private static final Map<String, String> NAV_START;
     private static final Map<String, String> NAV_FINISH;
+    private static final Map<String, String> NAV_FINISH_RECOVER;
+    private static final Map<String, String> NAV_FINISH_REJECTED;
     private static final Map<String, String> NAV_AUTHORIZE;
     private static final Map<String, String> NAV_DELETE;
     private static final Map<String, String> NAV_STATUS;
@@ -55,6 +62,14 @@ public class OneclickMallController extends BaseController {
         NAV_FINISH.put("request", "Petición");
         NAV_FINISH.put("response", "Respuesta");
         NAV_FINISH.put("authorize", "Autorizar una transacción");
+
+        NAV_FINISH_RECOVER = new LinkedHashMap<>();
+        NAV_FINISH_RECOVER.put("data", "Datos");
+
+        NAV_FINISH_REJECTED = new LinkedHashMap<>();
+        NAV_FINISH_REJECTED.put("data", "Datos");
+        NAV_FINISH_REJECTED.put("request", "Petición");
+        NAV_FINISH_REJECTED.put("response", "Respuesta");
 
         NAV_AUTHORIZE = new LinkedHashMap<>();
         NAV_AUTHORIZE.put("request", "Petición");
@@ -116,8 +131,8 @@ public class OneclickMallController extends BaseController {
                 "email", email,
                 "returnUrl", returnUrl
         )));
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
         model.addAttribute("url", resp.getUrlWebpay());
         model.addAttribute("token", resp.getToken());
 
@@ -129,16 +144,31 @@ public class OneclickMallController extends BaseController {
 
     @GetMapping("/finish")
     public String finish(HttpServletRequest req,
+                         @RequestParam Map<String, String> params,
                          @RequestParam(name = "TBK_TOKEN", required = false) String token,
+                         @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String ordenCompra,
                          Model model)
             throws IOException, InscriptionFinishException {
 
         model.addAttribute("navigation", NAV_FINISH);
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
+        if (ordenCompra != null) {
+            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_RECOVER); 
+            model.addAttribute("request_data_json", toJson(params));
+            return VIEW_RECOVER_ERROR;
+        }
+
         String username = (String) req.getSession().getAttribute("username");
 
         var resp = inscription.finish(token);
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
+
+        if (resp.getResponseCode() != AUTHORIZED) {
+            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_REJECTED);
+            return VIEW_REJECTED_ERROR;
+        }
 
         req.getSession().setAttribute("tbkUser", resp.getTbkUser());
 
@@ -150,8 +180,6 @@ public class OneclickMallController extends BaseController {
         model.addAttribute("token", token);
         model.addAttribute("username", username);
         model.addAttribute("tbk_user", resp.getTbkUser());
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
 
         model.addAttribute("child_commerce_code1", IntegrationCommerceCodes.ONECLICK_MALL_CHILD1);
         model.addAttribute("child_commerce_code2", IntegrationCommerceCodes.ONECLICK_MALL_CHILD2);
@@ -211,8 +239,8 @@ public class OneclickMallController extends BaseController {
 
         var resp = transaction.authorize(username, tbkUser, buyOrder, details);
 
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE, resp);
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         return VIEW_AUTHORIZE;
     }
@@ -225,7 +253,7 @@ public class OneclickMallController extends BaseController {
         addBreadcrumbs(model, "Consultar estado", "#");
 
         var resp = transaction.status(buyOrder);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         return VIEW_STATUS;
     }
@@ -242,7 +270,7 @@ public class OneclickMallController extends BaseController {
         
         model.addAttribute("buy_order", buyOrder);
         var resp = transaction.refund(buyOrder, childCommerceCode, childBuyOrder, amount);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         return VIEW_REFUND;
     }
