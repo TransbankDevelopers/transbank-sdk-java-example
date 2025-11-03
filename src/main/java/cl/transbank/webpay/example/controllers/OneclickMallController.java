@@ -112,7 +112,7 @@ public class OneclickMallController extends BaseController {
     @GetMapping("/start")
     public String start(HttpServletRequest req, Model model)
             throws IOException, InscriptionStartException {
-        model.addAttribute("navigation", NAV_START);
+        model.addAttribute(MODEL_NAVIGATION, NAV_START);
         addBreadcrumbs(model, "Iniciar inscripción", "#");
 
         String username = "user_" + getRandomNumber();
@@ -150,7 +150,7 @@ public class OneclickMallController extends BaseController {
                          Model model)
             throws IOException, InscriptionFinishException {
 
-        model.addAttribute("navigation", NAV_FINISH);
+        model.addAttribute(MODEL_NAVIGATION, NAV_FINISH);
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
         if (ordenCompra != null) {
@@ -193,7 +193,7 @@ public class OneclickMallController extends BaseController {
                          Model model)
             throws IOException, InscriptionDeleteException {
 
-        model.addAttribute("navigation", NAV_DELETE);
+        model.addAttribute(MODEL_NAVIGATION, NAV_DELETE);
         addBreadcrumbs(model, "Eliminar inscripción", "#");
 
         inscription.delete(tbkUser, username);
@@ -215,7 +215,7 @@ public class OneclickMallController extends BaseController {
             Model model)
             throws IOException, TransactionAuthorizeException {
 
-        model.addAttribute("navigation", NAV_AUTHORIZE);
+        model.addAttribute(MODEL_NAVIGATION, NAV_AUTHORIZE);
         addBreadcrumbs(model, "Autorizar transacción", "#");
 
         String buyOrder = "Order" + getRandomNumber();
@@ -249,7 +249,7 @@ public class OneclickMallController extends BaseController {
     public String status(@RequestParam("buy_order") String buyOrder, Model model)
             throws IOException, TransactionStatusException {
 
-        model.addAttribute("navigation", NAV_STATUS);
+        model.addAttribute(MODEL_NAVIGATION, NAV_STATUS);
         addBreadcrumbs(model, "Consultar estado", "#");
 
         var resp = transaction.status(buyOrder);
@@ -265,7 +265,7 @@ public class OneclickMallController extends BaseController {
                          @RequestParam double amount,
                          Model model)
     throws IOException, TransactionRefundException {
-        model.addAttribute("navigation", NAV_REFUND);
+        model.addAttribute(MODEL_NAVIGATION, NAV_REFUND);
         addBreadcrumbs(model, "Reembolso", "#");
         
         model.addAttribute("buy_order", buyOrder);
