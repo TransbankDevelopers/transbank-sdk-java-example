@@ -167,6 +167,7 @@ public class OneclickMallController extends BaseController {
 
         if (resp.getResponseCode() != AUTHORIZED) {
             model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_REJECTED);
+            model.addAttribute("request_data_json", toJson(params));
             return VIEW_REJECTED_ERROR;
         }
 

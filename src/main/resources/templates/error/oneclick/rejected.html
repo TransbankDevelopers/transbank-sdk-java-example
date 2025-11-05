@@ -11,8 +11,9 @@
             Después de finalizar el flujo en el formulario de inscripción, recibirás un GET con la siguiente información:
         </p>
         
+        <pre><code class="language-json" th:text="${request_data_json}"></code></pre>
 
-        <h2 id="request">Paso 2: Petición de autorización</h2>
+        <h2 class="mt-32" id="request">Paso 2: Petición de autorización</h2>
         <p class="mb-32">
             Utiliza el token recibido para finalizar la Inscripción mediante una nueva llamada a Oneclick.
         </p>
