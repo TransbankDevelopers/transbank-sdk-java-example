@@ -14,7 +14,7 @@
         <h2 id="data">Paso 1 - Datos recibidos:</h2>
         <p class="mb-32">
             Después de completar el flujo en el formulario de pago, recibirás un
-            POST con la siguiente información:
+            GET con la siguiente información:
         </p>
 
         <pre><code class="language-html" th:text="${returnUrl} + '?token_ws=' + ${token}"></code></pre>
