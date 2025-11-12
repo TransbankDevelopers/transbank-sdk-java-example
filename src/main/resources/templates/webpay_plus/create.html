@@ -23,7 +23,7 @@ import cl.transbank.common.IntegrationType;
 import cl.transbank.webpay.common.WebpayOptions;
 import cl.transbank.webpay.webpayplus.WebpayPlus;
 
-tx = new WebpayPlus.Transaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));
+var tx = new WebpayPlus.Transaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));
 var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
 </code></pre>
 
