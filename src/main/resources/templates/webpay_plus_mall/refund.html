@@ -42,7 +42,7 @@
 
         <pre><code class="language-java mb-32">
 var tx = new WebpayPlus.MallTransaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));            
-final var response = tx.refund(token, amount);
+var resp = tx.refund(token, childBuyOrder, childCommerceCode, amount);
         </code></pre>
 
         <h2 id="response">Paso 2 - Respuesta</h2>
