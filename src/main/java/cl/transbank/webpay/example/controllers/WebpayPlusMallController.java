@@ -101,22 +101,19 @@ public class WebpayPlusMallController extends BaseController {
                 .add(amount1, childCommerceCode1, childBuyOrder1)
                 .add(amount2, childCommerceCode2, childBuyOrder2);
         
-        Map<String, Object> request = new LinkedHashMap<>(Map.ofEntries(
-            Map.entry("buyOrder", buyOrder),
-            Map.entry("sessionId", sessionId),
-            Map.entry("returnUrl", returnUrl),
-            Map.entry("details", new Object[]{
-                Map.of(
+        var request = new LinkedHashMap<String, Object>();
+        request.put("buyOrder", buyOrder);
+        request.put("sessionId", sessionId);
+        request.put("returnUrl", returnUrl);
+        request.put("details[0]", Map.of(
                         "amount", amount1,
                         "commerceCode", childCommerceCode1,
                         "buyOrder", childBuyOrder1
-                ),
-                Map.of(
+        ));
+        request.put("details[1]", Map.of(
                         "amount", amount2,
                         "commerceCode", childCommerceCode2,
                         "buyOrder", childBuyOrder2
-                )   
-            })
         ));
         
         model.addAttribute("request", request);
