@@ -1,0 +1,78 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Webpay Mall Diferido - Captura de transacción</h1>
+        <p class="mb-32">
+            En este paso debemos capturar la transacción para realmente capturar el dinero que habia sido previamente
+            reservado al hacer la transacción
+        </p>
+
+        <h2 id="request">Paso 1: Petición</h2>
+        <p class="mb-32">
+            Para capturar una transacción necesitaremos el Token, Orden de compra, Código de autorización y monto a
+            capturar. Se hace de la siguiente manera.
+        </p>
+
+        <pre><code class="language-java">
+var tx = new WebpayPlus.MallTransaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));    
+var resp = tx.capture(childCommerceCode, token, childBuyOrder, authorizationCode, amount);
+        </code></pre>
+
+        <h2 class="mt-32" id="response">Paso 2: Respuesta</h2>
+        <p class="mb-32">
+            Una vez creada la transacción, recibirás los siguientes datos de respuesta:
+        </p>
+
+        <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
+
+        <h2 id="operations">¡Transacción Capturada!</h2>
+
+        <p class="mb-32">
+            Con la transacción confirmada, puedes mostrar al usuario una página de éxito de la transacción, proporcionándole la confirmación de que el proceso se ha completado con éxito.
+        </p>
+
+        <h2>Otras Utilidades</h2>
+        <p>
+            Después de confirmar la transacción, considera las siguientes utilidades adicionales:
+        </p>
+        <ul class="bullet-list mb-32">
+        <li><span class="fw-700">Reembolso:</span> Evalúa la posibilidad de reversar o anular el pago según ciertas condiciones comerciales.</li>
+        <li><span class="fw-700">Consultar Estado:</span> Hasta 7 días después de la transacción, puedes consultar su estado para obtener más detalles.</li>
+        </ul>
+
+        <form action="/webpay-mall-diferido/refund" method="GET">
+            <div class="tbk-refund-card mb-32">
+                <div class="input-container">
+                    <label for="amount" class="tbk-label"
+                    >Monto a reembolsar:</label
+                    >
+                    <input
+                            type="text"
+                            name="amount"
+                            class="tbk-input-text"
+                            th:value="${response_data.capturedAmount}"
+                    />
+                    <input
+                            type="hidden"
+                            name="token"
+                            th:value="${token}"
+                    />
+                    <input
+                            type="hidden"
+                            name="child_buy_order"
+                            th:value="${child_buy_order}"
+                    />
+                    <input
+                            type="hidden"
+                            name="child_commerce_code"
+                            th:value="${child_commerce_code}"
+                    />
+                </div>
+                <div class="tbk-refund-button-container">
+                    <button class="tbk-button primary">REEMBOLSAR</button>
+                    <a th:href="@{/webpay-mall-diferido/status(token_ws=${token})}"
+                       class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
