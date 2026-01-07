@@ -1,0 +1,109 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+
+        <h1>Webpay Oneclick Mall Diferido - Finalizar inscripción</h1>
+        <p class="mb-32">
+            En esta fase, completaremos el proceso de inscripción, permitiéndonos posteriormente realizar cargos a la
+            tarjeta que el Tarjetahabiente haya inscrito.
+        </p>
+
+        <h2 id="data">Paso 1: Datos recibidos</h2>
+        <p class="mb-32">
+            Después de finalizar el flujo en el formulario de inscripción, recibirás un GET con la siguiente
+            información:
+        </p>
+
+        <pre><code class="language-json mb-32">
+{
+  "TBK_TOKEN": "<span th:text="${token}"></span>"
+}
+    </code></pre>
+
+        <h2 id="request">Paso 2: Petición de autorización</h2>
+        <p class="mb-32">
+            Utiliza el token recibido para finalizar la inscripción mediante una nueva llamada a Oneclick.
+        </p>
+
+        <pre><code class="language-java mb-32">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.oneclick.Oneclick;
+
+var options = new WebpayOptions(
+                IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED,
+                IntegrationApiKeys.WEBPAY,
+                IntegrationType.TEST
+        );
+var inscription = new Oneclick.MallInscription(options);
+var response = inscription.finish(token);
+    </code></pre>
+
+        <h2 id="response">Paso 3: Respuesta</h2>
+        <p class="mb-32">
+            Transbank responderá con información crucial. Guarda estos detalles, ya que serán necesarios para autorizar
+            transacciones futuras.
+        </p>
+
+        <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
+
+        <h2 id="authorize">¡La tarjeta ya está inscrita!</h2>
+        <p class="mb-32">Con la inscripción exitosa se pueden autorizar transacciones.</p>
+
+        <h2>Autorizar una transacción</h2>
+        <p class="mb-32">
+            Asegúrate de guardar los datos de la respuesta obtenidos durante la inscripción. Estos serán esenciales para
+            llevar a cabo transacciones de manera efectiva.
+        </p>
+
+        <div th:replace="~{partials/table :: table(${request_data})}"></div>
+
+        <p class="mt-32">
+            Después de una inscripción exitosa, tienes dos opciones: autorizar un pago o borrar al usuario que se
+            acaba de inscribir.
+        </p>
+
+        <form th:action="@{/oneclick-mall-deferred/authorize}" method="get">
+            <input type="hidden" name="username" th:value="${username}"/>
+            <input type="hidden" name="tbk_user" th:value="${tbk_user}"/>
+            <input type="hidden" name="child_commerce_code1" th:value="${child_commerce_code1}"/>
+            <input type="hidden" name="child_commerce_code2" th:value="${child_commerce_code2}"/>
+
+            <div class="tbk-card">
+                <p class="mb-16">Tienda 1</p>
+                <div class="card-multi-field">
+                    <div class="input-container">
+                        <label class="tbk-label" for="child_commerce_amount1">Monto:</label>
+                        <input type="number" name="child_commerce_amount1" class="tbk-input-text" value="10000"/>
+                    </div>
+                    <div class="input-container">
+                        <label class="tbk-label" for="child_commerce_installments1">Cuotas:</label>
+                        <input type="number" name="child_commerce_installments1" class="tbk-input-text" value="0"/>
+                    </div>
+                </div>
+
+                <p class="mb-16 mt-32">Tienda 2</p>
+                <div class="card-multi-field">
+                    <div class="input-container">
+                        <label class="tbk-label" for="child_commerce_amount2">Monto:</label>
+                        <input type="number" name="child_commerce_amount2" class="tbk-input-text" value="5000"/>
+                    </div>
+                    <div class="input-container">
+                        <label class="tbk-label" for="child_commerce_installments2">Cuotas:</label>
+                        <input type="number" name="child_commerce_installments2" class="tbk-input-text" value="0"/>
+                    </div>
+                </div>
+
+                <div class="tbk-card-footer">
+                    <button class="tbk-button primary" type="submit">AUTORIZAR</button>
+                </div>
+            </div>
+        </form>
+
+        <a th:href="@{/oneclick-mall-deferred/delete(tbk_user=${tbk_user}, username=${username})}"
+           class="tbk-button primary mt-16 mb-32">
+            BORRAR USUARIO
+        </a>
+    </div>
+</div>

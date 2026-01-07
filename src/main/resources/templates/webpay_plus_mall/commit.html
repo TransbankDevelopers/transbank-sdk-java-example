@@ -1,6 +1,6 @@
 <div th:replace="~{layout :: layout(~{::content})}">
     <div th:fragment="content">
-        <h1>Webpay Plus - Confirmar transacción</h1>
+        <h1>Webpay Plus Mall - Confirmar transacción</h1>
         <p class="mb-32">
             En este paso es importante confirmar la transacción para notificar a
             Transbank que hemos recibido exitosamente los detalles de la
@@ -26,14 +26,15 @@
         </p>
 
         <pre><code class="language-java">
-final WebpayPlusTransactionCommitResponse response = tx.commit(tokenWs);
+var tx = new WebpayPlus.MallTransaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));            
+var response = tx.commit(tokenWs);
         </code></pre>
 
         <h2 class="mt-32" id="response">Paso 3 - Respuesta:</h2>
         <p class="mb-32">
             Una vez que la transacción ha sido confirmada Transbank
             proporcionará la siguiente información. Es fundamental conservar
-            esta respuesta y verificar que el campo "response_code" tenga un
+            esta respuesta y verificar que el campo "responseCode" tenga un
             valor de cero y que el campo "status" sea "AUTHORIZED".
         </p>
 
@@ -61,30 +62,28 @@ final WebpayPlusTransactionCommitResponse response = tx.commit(tokenWs);
             </li>
         </ul>
 
-        <form action="/webpay-plus/refund" method="GET">
-            <div class="tbk-refund-card mb-32">
-                <div class="input-container">
-                    <label for="amount" class="tbk-label"
-                    >Monto a reembolsar:</label
-                    >
-                    <input
-                            type="text"
-                            name="amount"
-                            class="tbk-input-text"
-                            th:value="${response_data.amount}"
-                    />
-                    <input
-                            type="hidden"
-                            name="token_ws"
-                            th:value="${token}"
-                    />
+        <div th:each="detail : ${response_data.details}">
+            <form th:action="@{/webpay-mall/refund}" method="get">
+                <div class="tbk-card">
+                    <div class="input-container">
+                        <label for="amount" class="tbk-label">Monto a reembolsar:</label>
+                        <input type="text" name="amount" class="tbk-input-text" th:value="${detail.amount}" />
+                        <input type="hidden" name="child_commerce_code" th:value="${detail.commerceCode}" />
+                        <input type="hidden" name="child_buy_order" th:value="${detail.buyOrder}" />
+                        <input type="hidden" name="token" th:value="${token}" />
+                    </div>
+                    <div class="tbk-card-footer">
+                        <button class="tbk-button primary">REEMBOLSAR</button>
+                    </div>
                 </div>
-                <div class="tbk-refund-button-container">
-                    <button class="tbk-button primary">REEMBOLSAR</button>
-                    <a th:href="@{/webpay-plus/status(token_ws=${token})}"
-                       class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
+
+        <div class="mb-32">
+            <a th:href="@{/webpay-mall/status(token_ws=${token})}"
+                class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+        </div>
+
+
     </div>
 </div>

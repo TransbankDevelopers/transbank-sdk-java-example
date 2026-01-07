@@ -1,0 +1,28 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Webpay Mall Diferido - Consultar estado de transacción</h1>
+        <p class="mb-32">
+            Puedes solicitar el estado de una transacción hasta 7 días después
+            de su realización. No hay límite de solicitudes de este tipo durante
+            ese período. Sin embargo, una vez pasados los 7 días, ya no podrás
+            revisar su estado.
+        </p>
+
+        <h2 class="mt-32" id="request">Paso 1 - Petición:</h2>
+        <p class="mb-32">
+            Para realizar la consulta, necesitas el token de la transacción de la cual deseas obtener el estado. Utiliza este token para realizar una llamada al SDK.
+        </p>
+        <pre><code class="language-java">
+var tx = new WebpayPlus.MallTransaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));            
+final var response = tx.status(token);
+        </code></pre>
+
+        <h2 class="mt-32" id="response">Paso 2 - Respuesta</h2>
+        <p class="mb-32">
+            Una vez que hayas creado la transacción, aquí encontrarás los datos de respuesta generados por el proceso.
+        </p>
+        <div class="mb-32">
+            <pre><code class="language-json" th:text="${response_data_json}"></code></pre>
+        </div>
+    </div>
+</div>

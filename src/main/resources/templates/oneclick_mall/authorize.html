@@ -1,0 +1,142 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Webpay Oneclick Mall - Autorizar pago</h1>
+
+    <p class="mb-32">
+      En este primer paso, procederemos a autorizar una transacción en la
+      tarjeta que ha sido previamente inscrita.
+    </p>
+
+    <h2 id="request">Paso 1: Petición</h2>
+
+    <p class="mb-32">
+      Ahora que contamos con el <b>username</b> y el <b>tbkUser</b> obtenidos
+      durante la inscripción, estamos listos para autorizar transacciones en la
+      tarjeta inscrita.
+    </p>
+
+    <pre><code class="language-java">
+var options = new WebpayOptions(
+    IntegrationCommerceCodes.ONECLICK_MALL
+    IntegrationApiKeys.WEBPAY,
+    IntegrationType.TEST
+);
+var transaction = new Oneclick.MallTransaction(options);
+var details = MallTransactionCreateDetails
+    .build()
+    .add(
+            amount1,
+            childCode1,
+            childBuyOrder1,
+            (byte) installments1
+    )
+    .add(
+            amount2,
+            childCode2,
+            childBuyOrder2,
+            (byte) installments2
+    );
+var resp = transaction.authorize(username, tbkUser, buyOrder, details);
+    </code></pre>
+
+    <h2 class="mt-32" id="response">Paso 2: Respuesta</h2>
+
+    <p class="mb-32">
+      Una vez que la transacción ha sido autorizada, Transbank proporcionará la
+      siguiente información. Es fundamental conservar esta respuesta y verificar
+      que el campo <b>responseCode</b> tenga un valor de 0 y que el campo
+      <b>status</b> sea AUTHORIZED.
+    </p>
+
+    <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
+
+    <h2 id="done">¡Listo!</h2>
+
+    <p class="mb-32">
+      Con la autorización exitosa, puedes mostrar al usuario una página de éxito
+      de la transacción, proporcionándole la confirmación de que el proceso se
+      ha completado con éxito.
+    </p>
+
+    <div class="instructions">
+      <h2>Otras utilidades</h2>
+      <p class="mb-32">
+        Después de autorizar la transacción, considera las siguientes utilidades
+        adicionales:
+      </p>
+      <ul class="list">
+        <li>
+          <b>Reembolsar:</b> Puedes reversar o anular el pago según ciertas
+          condiciones comerciales.
+        </li>
+        <li>
+          <b>Consultar Estado:</b> Hasta 7 días después de realizada la
+          transacción, podrás consultar el estado de la transacción.
+        </li>
+      </ul>
+    </div>
+
+    <div th:each="detail : ${response_data.details}">
+      <form th:action="@{/oneclick-mall/refund}" method="get">
+        <div class="tbk-card">
+          <div class="card-multi-field">
+            <div class="input-container">
+              <label class="tbk-label" for="buy_order">Orden de compra:</label>
+              <input
+                class="tbk-input-text"
+                type="text"
+                name="buy_order"
+                th:value="${response_data.buyOrder}"
+              />
+            </div>
+
+            <div class="input-container">
+              <label class="tbk-label" for="child_commerce_code"
+                >Código de comercio tienda:</label
+              >
+              <input
+                class="tbk-input-text"
+                type="text"
+                name="child_commerce_code"
+                th:value="${detail.commerceCode}"
+              />
+            </div>
+
+            <div class="input-container">
+              <label class="tbk-label" for="child_buy_order"
+                >Orden de compra tienda:</label
+              >
+              <input
+                class="tbk-input-text"
+                type="text"
+                name="child_buy_order"
+                th:value="${detail.buyOrder}"
+              />
+            </div>
+
+            <div class="input-container">
+              <label class="tbk-label" for="amount">Monto a reembolsar:</label>
+              <input
+                class="tbk-input-text"
+                type="text"
+                name="amount"
+                th:value="${detail.amount}"
+              />
+            </div>
+          </div>
+
+          <div class="tbk-card-footer">
+            <button type="submit" class="tbk-button primary">REEMBOLSAR</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <a
+      class="tbk-button primary mb-32"
+      th:href="@{/oneclick-mall/status(buy_order=${response_data.buyOrder})}"
+    >
+      CONSULTAR ESTADO
+    </a>
+  </div>
+</div>

@@ -1,10 +1,14 @@
 <div th:replace="~{layout :: layout(~{::content})}">
     <div th:fragment="content">
-        <h1>Webpay Plus Diferido - Creación de transacción</h1>
+        <h1>Webpay Mall - Creación de transacción Mall</h1>
         <p class="mb-32">
             En esta etapa, se procederá a la creación de una transacción con el
             fin de obtener un identificador único. Esto nos permitirá redirigir
             al Tarjetahabiente hacia el formulario de pago en el siguiente paso.
+        </p>
+
+         <p class="mb-32">
+            Todas las transacciones en este proyecto de ejemplo son realizadas en ambiente de integración.
         </p>
 
         <h2 id="request">Paso 1: Petición</h2>
@@ -23,8 +27,13 @@ import cl.transbank.common.IntegrationType;
 import cl.transbank.webpay.common.WebpayOptions;
 import cl.transbank.webpay.webpayplus.WebpayPlus;
 
-var tx = new WebpayPlus.Transaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));
-var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
+var details = MallTransactionCreateDetails.build()
+                .add(amount1, childCommerceCode1, childBuyOrder1)
+                .add(amount2, childCommerceCode2, childBuyOrder2);
+
+var tx = new WebpayPlus.MallTransaction(new WebpayOptions(commerceCode, apiKey, IntegrationType.TEST));
+
+var resp = tx.create(buyOrder, sessionId, returnUrl, details);
 </code></pre>
 
         <h2 class="mt-32" id="response">Paso 2: Respuesta</h2>
@@ -43,10 +52,12 @@ var resp = tx.create(buyOrder, sessionId, amount, returnUrl);
         </p>
 
         <pre><code class="language-html"
-                   th:text="'<form action=&quot;https://webpay3gint.transbank.cl/webpayserver/initTransaction&quot; method=&quot;POST&quot;>
+   th:text="'<form action=&quot;https://webpay3gint.transbank.cl/webpayserver/initTransaction&quot; method=&quot;POST&quot;>
     <input type=&quot;hidden&quot; name=&quot;token_ws&quot; value=&quot;' + ${response_data.token} + '&quot; />
     <input type=&quot;submit&quot; value=&quot;Pagar&quot; />
-</form>'"></code></pre>
+</form>'">
+</code></pre>
+
 
         <h2 class="mt-32" id="example">Ejemplo</h2>
         <p class="mb-32">

@@ -1,0 +1,19 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1 id="recovery" th:text="${product} + ' - Inscripción anulada'"></h1>
+        <p class="mb-32">
+            La inscripción ha sido anulada por el usuario. En esta instancia, la inscripción fue abandonada al seleccionar la opción 'Abandonar y volver al comercio'.
+        </p>
+
+    <h2 id="data">Datos Recibidos:</h2>
+    <p class="mb-32">
+        Después de que el usuario anule la inscripción en el formulario de pago, recibirás un GET con la siguiente información:
+    </p>
+
+    <pre><code class="language-json" th:text="${request_data_json}"></code></pre>
+
+    <h2 class="mt-32">¡Se abandonó la inscripción!</h2>
+    <p class="mb-32">Este mensaje indica que la inscripción ha sido cancelada por decisión del usuario. Si tienes alguna pregunta o necesitas asistencia, no dudes en contactarnos. Lamentamos cualquier inconveniente y agradecemos tu comprensión.
+    </p>
+    </div>
+</div>
