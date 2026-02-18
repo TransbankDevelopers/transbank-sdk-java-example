@@ -104,7 +104,7 @@ public class TransaccionCompletaController extends BaseController {
             Model model
     ) throws TransactionCreateException, IOException {
         model.addAttribute("navigation", NAV_CREATE);
-        addProductAndBreadcrumbs(model, "Crear Transacción", BASE_URL + "/create");
+        addProductAndBreadcrumbs(model, "Crear transacción", BASE_URL + "/create");
 
         String cardNumber = number.replaceAll("\\s+", "");
         String[] expiryParts = expiry.split("/");
@@ -150,7 +150,7 @@ public class TransaccionCompletaController extends BaseController {
             Model model
     ) throws TransactionCommitException, IOException {
         model.addAttribute("navigation", NAV_COMMIT);
-        addProductAndBreadcrumbs(model, "Confirmar", BASE_URL + "/commit");
+        addProductAndBreadcrumbs(model, "Confirmar transacción", BASE_URL + "/commit");
 
         Byte deferredPeriodIndex = null;
         Boolean gracePeriod = Boolean.FALSE;
@@ -189,7 +189,7 @@ public class TransaccionCompletaController extends BaseController {
             Model model
     ) throws TransactionRefundException, IOException {
         model.addAttribute("navigation", NAV_REFUND);
-        addProductAndBreadcrumbs(model, "Reversa", BASE_URL + "/refund");
+        addProductAndBreadcrumbs(model, "Reembolsar", BASE_URL + "/refund");
 
         var resp = tx.refund(token, amount);
         model.addAttribute("request_token", token);
