@@ -32,6 +32,19 @@ public class TransaccionCompletaController extends BaseController {
     private static final String VIEW_STATUS = TEMPLATE_FOLDER + "/status";
     private static final String VIEW_REFUND = TEMPLATE_FOLDER + "/refund";
 
+    private static final String NAV_LABEL_FORM = "Formulario";
+    private static final String NAV_LABEL_REQUEST = "Petición";
+    private static final String NAV_LABEL_RESPONSE = "Respuesta";
+
+    private static final String ATTR_NAVIGATION = "navigation";
+    private static final String ATTR_PRODUCT = "product";
+    private static final String ATTR_BREADCRUMBS = "breadcrumbs";
+    private static final String ATTR_RESPONSE_DATA = "response_data";
+    private static final String ATTR_RESPONSE_DATA_JSON = "response_data_json";
+    private static final String ATTR_REQUEST_TOKEN = "request_token";
+    private static final String ATTR_AMOUNT = "amount";
+    private static final String ATTR_ERROR = "error";
+
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private static final Map<String, String> NAV_INDEX;
@@ -43,26 +56,26 @@ public class TransaccionCompletaController extends BaseController {
 
     static {
         NAV_INDEX = new LinkedHashMap<>();
-        NAV_INDEX.put("form", "Formulario");
+        NAV_INDEX.put("form", NAV_LABEL_FORM);
 
         NAV_CREATE = new LinkedHashMap<>();
-        NAV_CREATE.put("request", "Petición");
-        NAV_CREATE.put("response", "Respuesta");
-        NAV_CREATE.put("form", "Formulario");
+        NAV_CREATE.put("request", NAV_LABEL_REQUEST);
+        NAV_CREATE.put("response", NAV_LABEL_RESPONSE);
+        NAV_CREATE.put("form", NAV_LABEL_FORM);
 
         NAV_INSTALLMENTS = new LinkedHashMap<>();
-        NAV_INSTALLMENTS.put("request", "Petición");
-        NAV_INSTALLMENTS.put("response", "Respuesta");
-        NAV_INSTALLMENTS.put("form", "Formulario");
+        NAV_INSTALLMENTS.put("request", NAV_LABEL_REQUEST);
+        NAV_INSTALLMENTS.put("response", NAV_LABEL_RESPONSE);
+        NAV_INSTALLMENTS.put("form", NAV_LABEL_FORM);
 
         NAV_COMMIT = new LinkedHashMap<>();
-        NAV_COMMIT.put("request", "Petición");
-        NAV_COMMIT.put("response", "Respuesta");
-        NAV_COMMIT.put("form", "Formulario");
+        NAV_COMMIT.put("request", NAV_LABEL_REQUEST);
+        NAV_COMMIT.put("response", NAV_LABEL_RESPONSE);
+        NAV_COMMIT.put("form", NAV_LABEL_FORM);
 
         NAV_STATUS = new LinkedHashMap<>();
-        NAV_STATUS.put("request", "Petición");
-        NAV_STATUS.put("response", "Respuesta");
+        NAV_STATUS.put("request", NAV_LABEL_REQUEST);
+        NAV_STATUS.put("response", NAV_LABEL_RESPONSE);
 
         NAV_REFUND = NAV_STATUS;
     }
@@ -86,13 +99,13 @@ public class TransaccionCompletaController extends BaseController {
         if (label != null) {
             breadcrumbs.put(label, url);
         }
-        model.addAttribute("product", PRODUCT);
-        model.addAttribute("breadcrumbs", breadcrumbs);
+        model.addAttribute(ATTR_PRODUCT, PRODUCT);
+        model.addAttribute(ATTR_BREADCRUMBS, breadcrumbs);
     }
 
     @GetMapping("")
     public String index(Model model) {
-        model.addAttribute("navigation", NAV_INDEX);
+        model.addAttribute(ATTR_NAVIGATION, NAV_INDEX);
         addProductAndBreadcrumbs(model, null, null);
         return VIEW_INDEX;
     }
@@ -105,7 +118,7 @@ public class TransaccionCompletaController extends BaseController {
             @RequestParam("cvc") String cvc,
             Model model
     ) throws TransactionCreateException, IOException {
-        model.addAttribute("navigation", NAV_CREATE);
+        model.addAttribute(ATTR_NAVIGATION, NAV_CREATE);
         addProductAndBreadcrumbs(model, "Crear transacción", BASE_URL + "/create");
 
         String cardNumber = number.replaceAll("\\s+", "");
@@ -121,8 +134,8 @@ public class TransaccionCompletaController extends BaseController {
         var resp = tx.create(buyOrder, sessionId, amount, Short.parseShort(cvc), cardNumber, cardExpiry);
         req.getSession().setAttribute("transaccion_completa_amount", amount);
 
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(ATTR_RESPONSE_DATA, resp);
+        model.addAttribute(ATTR_RESPONSE_DATA_JSON, toJson(resp));
 
         return VIEW_CREATE;
     }
@@ -133,13 +146,13 @@ public class TransaccionCompletaController extends BaseController {
             @RequestParam("installments_number") byte installmentsNumber,
             Model model
     ) throws TransactionInstallmentException, IOException {
-        model.addAttribute("navigation", NAV_INSTALLMENTS);
+        model.addAttribute(ATTR_NAVIGATION, NAV_INSTALLMENTS);
         addProductAndBreadcrumbs(model, "Consulta de cuotas", BASE_URL + "/installments");
 
         var resp = tx.installments(token, installmentsNumber);
-        model.addAttribute("request_token", token);
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(ATTR_REQUEST_TOKEN, token);
+        model.addAttribute(ATTR_RESPONSE_DATA, resp);
+        model.addAttribute(ATTR_RESPONSE_DATA_JSON, toJson(resp));
 
         return VIEW_INSTALLMENTS;
     }
@@ -151,7 +164,7 @@ public class TransaccionCompletaController extends BaseController {
             @RequestParam(value = "idQueryInstallments", required = false) Long idQueryInstallments,
             Model model
     ) throws TransactionCommitException, IOException {
-        model.addAttribute("navigation", NAV_COMMIT);
+        model.addAttribute(ATTR_NAVIGATION, NAV_COMMIT);
         addProductAndBreadcrumbs(model, "Confirmar transacción", BASE_URL + "/commit");
 
         Byte deferredPeriodIndex = null;
@@ -161,10 +174,10 @@ public class TransaccionCompletaController extends BaseController {
         Object amount = req.getSession().getAttribute("transaccion_completa_amount");
         req.getSession().removeAttribute("transaccion_completa_amount");
 
-        model.addAttribute("amount", amount);
-        model.addAttribute("request_token", token);
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(ATTR_AMOUNT, amount);
+        model.addAttribute(ATTR_REQUEST_TOKEN, token);
+        model.addAttribute(ATTR_RESPONSE_DATA, resp);
+        model.addAttribute(ATTR_RESPONSE_DATA_JSON, toJson(resp));
 
         return VIEW_COMMIT;
     }
@@ -174,12 +187,12 @@ public class TransaccionCompletaController extends BaseController {
             @RequestParam("token") String token,
             Model model
     ) throws TransactionStatusException, IOException {
-        model.addAttribute("navigation", NAV_STATUS);
+        model.addAttribute(ATTR_NAVIGATION, NAV_STATUS);
         addProductAndBreadcrumbs(model, "Estado de transacción", BASE_URL + "/status");
 
         var resp = tx.status(token);
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(ATTR_RESPONSE_DATA, resp);
+        model.addAttribute(ATTR_RESPONSE_DATA_JSON, toJson(resp));
 
         return VIEW_STATUS;
     }
@@ -190,13 +203,13 @@ public class TransaccionCompletaController extends BaseController {
             @RequestParam("amount") double amount,
             Model model
     ) throws TransactionRefundException, IOException {
-        model.addAttribute("navigation", NAV_REFUND);
+        model.addAttribute(ATTR_NAVIGATION, NAV_REFUND);
         addProductAndBreadcrumbs(model, "Reembolsar", BASE_URL + "/refund");
 
         var resp = tx.refund(token, amount);
-        model.addAttribute("request_token", token);
-        model.addAttribute("response_data", resp);
-        model.addAttribute("response_data_json", toJson(resp));
+        model.addAttribute(ATTR_REQUEST_TOKEN, token);
+        model.addAttribute(ATTR_RESPONSE_DATA, resp);
+        model.addAttribute(ATTR_RESPONSE_DATA_JSON, toJson(resp));
 
         return VIEW_REFUND;
     }
@@ -204,7 +217,7 @@ public class TransaccionCompletaController extends BaseController {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
         log.error("Error inesperado", e);
-        model.addAttribute("error", e.getMessage());
+        model.addAttribute(ATTR_ERROR, e.getMessage());
         return VIEW_ERROR;
     }
 }
