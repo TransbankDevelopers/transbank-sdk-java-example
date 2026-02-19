@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Log4j2
 @Controller
@@ -114,7 +114,7 @@ public class TransaccionCompletaController extends BaseController {
 
         String buyOrder = "O-" + getRandomNumber();
         String sessionId = "S-" + getRandomNumber();
-        double amount = 1000 + new Random().nextInt(1001);
+        double amount = 1000 + ThreadLocalRandom.current().nextInt(1001);
 
         var resp = tx.create(buyOrder, sessionId, amount, Short.parseShort(cvc), cardNumber, cardExpiry);
         req.getSession().setAttribute("transaccion_completa_amount", amount);
