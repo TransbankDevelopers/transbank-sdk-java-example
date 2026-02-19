@@ -45,39 +45,30 @@ public class TransaccionCompletaController extends BaseController {
     private static final String ATTR_AMOUNT = "amount";
     private static final String ATTR_ERROR = "error";
 
+    private static final String SESSION_AMOUNT = "transaccion_completa_amount";
+    private static final String NAV_KEY_REQUEST = "request";
+    private static final String NAV_KEY_RESPONSE = "response";
+    private static final String NAV_KEY_FORM = "form";
+
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
-    private static final Map<String, String> NAV_INDEX;
-    private static final Map<String, String> NAV_CREATE;
-    private static final Map<String, String> NAV_INSTALLMENTS;
-    private static final Map<String, String> NAV_COMMIT;
-    private static final Map<String, String> NAV_STATUS;
-    private static final Map<String, String> NAV_REFUND;
+    private static final Map<String, String> NAV_INDEX = createNav(NAV_KEY_FORM);
+    private static final Map<String, String> NAV_CREATE = createNav(NAV_KEY_REQUEST, NAV_KEY_RESPONSE, NAV_KEY_FORM);
+    private static final Map<String, String> NAV_INSTALLMENTS = createNav(NAV_KEY_REQUEST, NAV_KEY_RESPONSE, NAV_KEY_FORM);
+    private static final Map<String, String> NAV_COMMIT = createNav(NAV_KEY_REQUEST, NAV_KEY_RESPONSE, NAV_KEY_FORM);
+    private static final Map<String, String> NAV_STATUS = createNav(NAV_KEY_REQUEST, NAV_KEY_RESPONSE);
+    private static final Map<String, String> NAV_REFUND = NAV_STATUS;
 
-    static {
-        NAV_INDEX = new LinkedHashMap<>();
-        NAV_INDEX.put("form", NAV_LABEL_FORM);
-
-        NAV_CREATE = new LinkedHashMap<>();
-        NAV_CREATE.put("request", NAV_LABEL_REQUEST);
-        NAV_CREATE.put("response", NAV_LABEL_RESPONSE);
-        NAV_CREATE.put("form", NAV_LABEL_FORM);
-
-        NAV_INSTALLMENTS = new LinkedHashMap<>();
-        NAV_INSTALLMENTS.put("request", NAV_LABEL_REQUEST);
-        NAV_INSTALLMENTS.put("response", NAV_LABEL_RESPONSE);
-        NAV_INSTALLMENTS.put("form", NAV_LABEL_FORM);
-
-        NAV_COMMIT = new LinkedHashMap<>();
-        NAV_COMMIT.put("request", NAV_LABEL_REQUEST);
-        NAV_COMMIT.put("response", NAV_LABEL_RESPONSE);
-        NAV_COMMIT.put("form", NAV_LABEL_FORM);
-
-        NAV_STATUS = new LinkedHashMap<>();
-        NAV_STATUS.put("request", NAV_LABEL_REQUEST);
-        NAV_STATUS.put("response", NAV_LABEL_RESPONSE);
-
-        NAV_REFUND = NAV_STATUS;
+    private static Map<String, String> createNav(String... keys) {
+        Map<String, String> nav = new LinkedHashMap<>();
+        for (String key : keys) {
+            switch (key) {
+                case NAV_KEY_REQUEST -> nav.put(key, NAV_LABEL_REQUEST);
+                case NAV_KEY_RESPONSE -> nav.put(key, NAV_LABEL_RESPONSE);
+                case NAV_KEY_FORM -> nav.put(key, NAV_LABEL_FORM);
+            }
+        }
+        return nav;
     }
 
     private final FullTransaction tx;
@@ -132,7 +123,7 @@ public class TransaccionCompletaController extends BaseController {
         double amount = 1000.0 + SECURE_RANDOM.nextInt(1001);
 
         var resp = tx.create(buyOrder, sessionId, amount, Short.parseShort(cvc), cardNumber, cardExpiry);
-        req.getSession().setAttribute("transaccion_completa_amount", amount);
+        req.getSession().setAttribute(SESSION_AMOUNT, amount);
 
         model.addAttribute(ATTR_RESPONSE_DATA, resp);
         model.addAttribute(ATTR_RESPONSE_DATA_JSON, toJson(resp));
@@ -171,8 +162,8 @@ public class TransaccionCompletaController extends BaseController {
         Boolean gracePeriod = Boolean.FALSE;
 
         var resp = tx.commit(token, idQueryInstallments, deferredPeriodIndex, gracePeriod);
-        Object amount = req.getSession().getAttribute("transaccion_completa_amount");
-        req.getSession().removeAttribute("transaccion_completa_amount");
+        Object amount = req.getSession().getAttribute(SESSION_AMOUNT);
+        req.getSession().removeAttribute(SESSION_AMOUNT);
 
         model.addAttribute(ATTR_AMOUNT, amount);
         model.addAttribute(ATTR_REQUEST_TOKEN, token);
