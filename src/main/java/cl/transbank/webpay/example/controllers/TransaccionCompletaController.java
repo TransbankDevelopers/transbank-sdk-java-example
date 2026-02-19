@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+import java.security.SecureRandom;
 
 @Log4j2
 @Controller
@@ -31,6 +31,8 @@ public class TransaccionCompletaController extends BaseController {
     private static final String VIEW_COMMIT = TEMPLATE_FOLDER + "/commit";
     private static final String VIEW_STATUS = TEMPLATE_FOLDER + "/status";
     private static final String VIEW_REFUND = TEMPLATE_FOLDER + "/refund";
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private static final Map<String, String> NAV_INDEX;
     private static final Map<String, String> NAV_CREATE;
@@ -114,7 +116,7 @@ public class TransaccionCompletaController extends BaseController {
 
         String buyOrder = "O-" + getRandomNumber();
         String sessionId = "S-" + getRandomNumber();
-        double amount = 1000 + ThreadLocalRandom.current().nextInt(1001);
+        double amount = 1000 + SECURE_RANDOM.nextInt(1001);
 
         var resp = tx.create(buyOrder, sessionId, amount, Short.parseShort(cvc), cardNumber, cardExpiry);
         req.getSession().setAttribute("transaccion_completa_amount", amount);
