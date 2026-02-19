@@ -116,7 +116,7 @@ public class TransaccionCompletaController extends BaseController {
 
         String buyOrder = "O-" + getRandomNumber();
         String sessionId = "S-" + getRandomNumber();
-        double amount = 1000 + SECURE_RANDOM.nextInt(1001);
+        double amount = 1000.0 + SECURE_RANDOM.nextInt(1001);
 
         var resp = tx.create(buyOrder, sessionId, amount, Short.parseShort(cvc), cardNumber, cardExpiry);
         req.getSession().setAttribute("transaccion_completa_amount", amount);
