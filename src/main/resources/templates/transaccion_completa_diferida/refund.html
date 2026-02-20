@@ -1,0 +1,51 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Transacción Completa Diferida - Reembolsar</h1>
+    <p class="mb-32">
+      En esta etapa, tendrás la posibilidad de solicitar el reembolso del dinero al tarjeta habiente. El
+      tipo de reembolso (Reversa, Anulación o Anulación parcial) dependerá del monto y el tiempo transcurrido desde la
+      transacción.
+    </p>
+
+    <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">
+      Para efectuar la solicitud de reembolso, necesitarás el token de la transacción y el monto que
+      deseas reversar. Si decides anular el monto total, puede resultar en una Reversa o Anulación, según ciertas
+      condiciones. En caso de un monto menor al total, se realizará una Anulación parcial. Las anulaciones parciales
+      para tarjetas débito y prepago no están soportadas.
+    </p>
+    <p class="mb-32">
+      En este
+      <a href="https://www.transbankdevelopers.cl/producto/webpay#anulaciones-y-reversas" class="tbk-link" target="_blank">link</a>
+      podrás ver mayor información sobre las condiciones y casos para anular o reversar
+      transacciones.
+    </p>
+
+    <pre class="mb-16"><code class="language-java">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.transaccioncompleta.FullTransaction;
+
+FullTransaction tx = new FullTransaction(
+  new WebpayOptions(
+    IntegrationCommerceCodes.TRANSACCION_COMPLETA_DEFERRED,
+    IntegrationApiKeys.WEBPAY,
+    IntegrationType.TEST
+  )
+);
+var resp = tx.refund(token, amount);
+    </code></pre>
+
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p>
+      Transbank responderá con el resultado de la reversa o anulación. Evalúa cuidadosamente esta respuesta para
+      confirmar que el reembolso se haya procesado de manera efectiva.
+    </p>
+
+    <pre class="mb-16"><code class="language-json" th:text="${response_data_json}"></code></pre>
+
+    <a th:href="@{/transaccion-completa-diferida/status(token=${request_token})}" class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+  </div>
+</div>
