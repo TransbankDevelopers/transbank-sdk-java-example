@@ -1,0 +1,67 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Transacción Completa Diferida - Capturar transacción</h1>
+    <p class="mb-32">
+      En este paso debemos capturar la transacción para realmente capturar el dinero que habia sido previamente
+      reservado al hacer la transacción.
+    </p>
+
+    <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">
+      Para capturar una transacción, necesitaremos el Token, la Orden de compra, el Código de autorización y el monto
+      a capturar.
+    </p>
+
+    <pre class="mb-16"><code class="language-java">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.transaccioncompleta.FullTransaction;
+
+FullTransaction tx = new FullTransaction(
+  new WebpayOptions(
+    IntegrationCommerceCodes.TRANSACCION_COMPLETA_DEFERRED,
+    IntegrationApiKeys.WEBPAY,
+    IntegrationType.TEST
+  )
+);
+var resp = tx.capture(token, buyOrder, authorizationCode, amount);
+    </code></pre>
+
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p>Una vez capturada la transacción, recibirás los siguientes datos de respuesta.</p>
+
+    <pre class="mb-16"><code class="language-json" th:text="${response_data_json}"></code></pre>
+
+    <h2 id="form">¡Listo!</h2>
+    <p class="mb-16">
+      Con la transacción capturada, puedes mostrar al usuario una página de éxito de la transacción, proporcionándole
+      la confirmación de que el proceso se ha completado con éxito.
+    </p>
+
+    <p>Después de capturar la transacción, podrás realizar otras operaciones útiles:</p>
+    <ul class="bullet-list">
+      <li><span class="fw-700">Reembolsar:</span> Puedes reversar o anular el pago según ciertas condiciones
+        comerciales.</li>
+      <li><span class="fw-700">Consultar Estado:</span> Hasta 7 días después de realizada la transacción, podrás
+        consultar el estado de la transacción.</li>
+    </ul>
+
+    <form th:action="@{/transaccion-completa-diferida/refund}" method="GET">
+      <div class="tbk-card">
+        <div class="input-container mb-32">
+          <label for="amount" class="tbk-label">Monto a reembolsar</label>
+          <input type="text" id="amount" name="amount" class="tbk-input-text" th:value="${amount}" />
+          <input type="hidden" name="token" th:value="${request_token}" />
+        </div>
+
+        <div class="tbk-card-footer">
+          <button class="tbk-button primary">REEMBOLSAR</button>
+        </div>
+      </div>
+    </form>
+
+    <a th:href="@{/transaccion-completa-diferida/status(token=${request_token})}" class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+  </div>
+</div>
