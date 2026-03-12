@@ -16,8 +16,12 @@ public abstract class BaseController {
     protected static final String VIEW_RECOVER_ERROR = "error/oneclick/recover";
     protected static final String VIEW_REJECTED_ERROR = "error/oneclick/rejected";
 
-    private static final JsonSerializer<Double> DOUBLE_SERIALIZER = (value, type, ctx) ->
-            new JsonPrimitive(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
+    private static final JsonSerializer<Double> DOUBLE_SERIALIZER = (value, type, ctx) -> {
+        if (value.isNaN() || value.isInfinite()) {
+            return new JsonPrimitive(value);
+        }
+        return new JsonPrimitive(new BigDecimal(value.toString()).stripTrailingZeros().toPlainString());
+    };
 
     public String toJson(Object obj) {
         return new GsonBuilder()
