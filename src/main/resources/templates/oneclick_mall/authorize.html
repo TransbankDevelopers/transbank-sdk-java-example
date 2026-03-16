@@ -120,7 +120,7 @@ var resp = transaction.authorize(username, tbkUser, buyOrder, details);
                 class="tbk-input-text"
                 type="text"
                 name="amount"
-                th:value="${detail.amount}"
+                th:value="${T(java.math.BigDecimal).valueOf(detail.amount).stripTrailingZeros().toPlainString()}"
               />
             </div>
           </div>
