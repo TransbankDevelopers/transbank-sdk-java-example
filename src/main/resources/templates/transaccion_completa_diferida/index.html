@@ -3,8 +3,8 @@
     <h1 id="form">Transacción Completa Diferida - Formulario</h1>
     <p>
       En esta primera etapa necesitas obtener los datos esenciales de la tarjeta
-      de crédito, débito o prepago del titular. Utiliza el formulario para
-      recolectar esta información de manera segura.
+      de crédito del titular. Utiliza el formulario para recolectar esta
+      información de manera segura.
     </p>
 
     <div class="tbk-shadow-2 tbk-card">
@@ -73,7 +73,10 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        if (typeof Card !== "undefined" && document.querySelector(".card-wrapper")) {
+        if (
+          typeof Card !== "undefined" &&
+          document.querySelector(".card-wrapper")
+        ) {
           const card = new Card({
             form: "#card-form",
             container: ".card-wrapper",
@@ -81,32 +84,32 @@
               number: 'input[name="number"]',
               name: 'input[name="name"]',
               expiry: 'input[name="expiry"]',
-              cvc: 'input[name="cvc"]'
+              cvc: 'input[name="cvc"]',
             },
             width: 300,
             formatting: true,
             messages: {
-              valid: "válido\n"
+              valid: "válido\n",
             },
             placeholders: {
               number: "•••• •••• •••• ••••",
               name: "Nombre Completo",
               expiry: "MM/YY",
-              cvc: "CVC"
+              cvc: "CVC",
             },
             defaults: {
               number: "4051 8856 0044 6623",
               name: "Nombre Completo",
               expiry: "11/23",
-              cvc: "123"
-            }
+              cvc: "123",
+            },
           });
 
           const inputs = document.querySelectorAll(
-            'input[name="number"], input[name="expiry"], input[name="cvc"], input[name="name"]'
+            'input[name="number"], input[name="expiry"], input[name="cvc"], input[name="name"]',
           );
 
-          inputs.forEach(input => {
+          inputs.forEach((input) => {
             if (input.value && input.value.trim() !== "") {
               const event = new Event("input", { bubbles: true });
               input.dispatchEvent(event);
