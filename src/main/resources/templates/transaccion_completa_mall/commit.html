@@ -30,9 +30,10 @@ MallFullTransaction tx = new MallFullTransaction(
   )
 );
 
+// idQueryInstallments, deferredPeriodIndex y gracePeriod son opcionales
 var details = MallTransactionCommitDetails.build()
-  .add("597055555574", "O-123", 1L, (byte) 0, false)
-  .add("597055555575", "O-456", 1L, (byte) 0, false);
+  .add("597055555574", "O-123", idQueryInstallments, deferredPeriodIndex, gracePeriod)
+  .add("597055555575", "O-456", idQueryInstallments, deferredPeriodIndex, gracePeriod);
 
 var resp = tx.commit(token, details);
     </code></pre>
