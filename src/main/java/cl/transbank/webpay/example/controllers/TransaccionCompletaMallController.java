@@ -72,7 +72,6 @@ public class TransaccionCompletaMallController extends BaseController {
                 case NAV_KEY_REQUEST -> nav.put(key, NAV_LABEL_REQUEST);
                 case NAV_KEY_RESPONSE -> nav.put(key, NAV_LABEL_RESPONSE);
                 case NAV_KEY_FORM -> nav.put(key, NAV_LABEL_FORM);
-                default -> { }
             }
         }
         return nav;
