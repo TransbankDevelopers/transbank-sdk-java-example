@@ -273,7 +273,6 @@ public class TransaccionCompletaMallController extends BaseController {
 
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
-        log.error("Error inesperado", e);
         model.addAttribute(ATTR_ERROR, e.getMessage());
         return VIEW_ERROR;
     }
