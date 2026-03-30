@@ -68,10 +68,14 @@ public class TransaccionCompletaMallController extends BaseController {
     private static Map<String, String> createNav(String... keys) {
         Map<String, String> nav = new LinkedHashMap<>();
         for (String key : keys) {
-            switch (key) {
-                case NAV_KEY_REQUEST -> nav.put(key, NAV_LABEL_REQUEST);
-                case NAV_KEY_RESPONSE -> nav.put(key, NAV_LABEL_RESPONSE);
-                case NAV_KEY_FORM -> nav.put(key, NAV_LABEL_FORM);
+            String label = switch (key) {
+                case NAV_KEY_REQUEST -> NAV_LABEL_REQUEST;
+                case NAV_KEY_RESPONSE -> NAV_LABEL_RESPONSE;
+                case NAV_KEY_FORM -> NAV_LABEL_FORM;
+                default -> null;
+            };
+            if (label != null) {
+                nav.put(key, label);
             }
         }
         return nav;
