@@ -1,0 +1,83 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Transacción Completa Mall - Confirmar transacción</h1>
+    <p class="mb-32">
+      En este paso crucial, procederemos a confirmar la transacción con el objetivo de notificar a
+      Transbank que hemos recibido la transacción de manera exitosa. Es fundamental destacar que si no se confirma la
+      transacción, esta será caducada.
+    </p>
+
+    <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">
+      Para confirmar la transacción, debes enviar el token correspondiente. En el caso de pagos a
+      plazos, también debes incluir el ID de la consulta de cuotas. En algunos casos, será necesario proporcionar el
+      índice del periodo diferido y un valor boolean indicando si se tomará el periodo de gracia.
+    </p>
+
+    <pre class="mb-16"><code class="language-java">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.transaccioncompleta.MallFullTransaction;
+import cl.transbank.webpay.transaccioncompleta.model.MallTransactionCommitDetails;
+
+MallFullTransaction tx = new MallFullTransaction(
+  new WebpayOptions(
+    IntegrationCommerceCodes.TRANSACCION_COMPLETA_MALL,
+    IntegrationApiKeys.WEBPAY,
+    IntegrationType.TEST
+  )
+);
+
+var details = MallTransactionCommitDetails.build()
+  .add("597055555574", "O-123", 1L, (byte) 0, false)
+  .add("597055555575", "O-456", 1L, (byte) 0, false);
+
+var resp = tx.commit(token, details);
+    </code></pre>
+
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p>
+      Una vez que la transacción ha sido confirmada Transbank proporcionará la siguiente información. Es fundamental
+      conservar esta respuesta y verificar que el campo "response_code" tenga un valor de cero y que el campo "status"
+      sea "AUTHORIZED".
+    </p>
+
+    <pre class="mb-16"><code class="language-json" th:text="${response_data_json}"></code></pre>
+
+    <h2 id="form">¡Listo!</h2>
+    <p class="mb-16">Con la transacción confirmada, puedes mostrar al usuario una página de éxito de la transacción, proporcionando la confirmación de que el proceso se ha completado con éxito.</p>
+    <p class="mb-16">Después de confirmar la transacción, podrás realizar otras operaciones útiles:</p>
+    <ul class="bullet-list mb-32">
+      <li><span class="fw-700">Reembolsar:</span> Puedes reversar o anular el pago según ciertas condiciones comerciales.</li>
+      <li><span class="fw-700">Consultar Estado:</span> Hasta 7 días después de realizada la transacción, podrás consultar el estado de la transacción.</li>
+    </ul>
+
+    <div th:each="detail : ${response_data.details}">
+      <form th:action="@{/transaccion-completa-mall/refund}" method="GET" data-loading-form="true">
+        <div class="tbk-card">
+          <span class="tbk-card-title">Reembolsar detalle</span>
+          <div class="input-container mb-32">
+            <label for="buy_order" class="tbk-label">Buy Order</label>
+            <input type="text" name="buy_order" class="tbk-input-text mb-16" th:value="${detail.buyOrder}" />
+            <label for="commerce_code" class="tbk-label">Commerce Code</label>
+            <input type="text" name="commerce_code" class="tbk-input-text mb-16" th:value="${detail.commerceCode}" />
+            <label for="amount" class="tbk-label">Monto a reembolsar</label>
+            <input type="text" name="amount" class="tbk-input-text mb-16" th:value="${detail.amount}" />
+            <input type="hidden" name="token" th:value="${request_token}" />
+          </div>
+
+          <div class="tbk-card-footer">
+            <button type="submit" class="tbk-button primary loading-button" data-loading-button="true">
+              <span class="loading-spinner" aria-hidden="true"></span>
+              <span>REEMBOLSAR</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <a th:href="@{/transaccion-completa-mall/status(token=${request_token})}" class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+  </div>
+</div>
