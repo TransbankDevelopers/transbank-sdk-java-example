@@ -13,7 +13,12 @@
         method="POST"
         id="card-form"
       >
-        <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input
+          th:if="${_csrf != null}"
+          type="hidden"
+          th:name="${_csrf.parameterName}"
+          th:value="${_csrf.token}"
+        />
         <div class="card-container">
           <div class="card-wrapper mb-4"></div>
           <div class="card-inputs-container">
@@ -32,8 +37,8 @@
             <div class="card-split-inputs">
               <div class="col-6 input-container mb-3">
                 <label for="expiry" class="tbk-label"
-                  >Fecha de Vencimiento (MM/YY)</label
-                >
+                  >Fecha de Vencimiento (MM/YY)
+                </label>
                 <input
                   type="text"
                   id="expiry"
@@ -74,7 +79,10 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        if (typeof Card !== "undefined" && document.querySelector(".card-wrapper")) {
+        if (
+          typeof Card !== "undefined" &&
+          document.querySelector(".card-wrapper")
+        ) {
           const card = new Card({
             form: "#card-form",
             container: ".card-wrapper",
@@ -82,32 +90,32 @@
               number: 'input[name="number"]',
               name: 'input[name="name"]',
               expiry: 'input[name="expiry"]',
-              cvc: 'input[name="cvc"]'
+              cvc: 'input[name="cvc"]',
             },
             width: 300,
             formatting: true,
             messages: {
-              valid: "válido\n"
+              valid: "válido\n",
             },
             placeholders: {
               number: "•••• •••• •••• ••••",
               name: "Nombre Completo",
               expiry: "MM/YY",
-              cvc: "CVC"
+              cvc: "CVC",
             },
             defaults: {
               number: "4051 8856 0044 6623",
               name: "Nombre Completo",
               expiry: "11/23",
-              cvc: "123"
-            }
+              cvc: "123",
+            },
           });
 
           const inputs = document.querySelectorAll(
-            'input[name="number"], input[name="expiry"], input[name="cvc"], input[name="name"]'
+            'input[name="number"], input[name="expiry"], input[name="cvc"], input[name="name"]',
           );
 
-          inputs.forEach(input => {
+          inputs.forEach((input) => {
             if (input.value && input.value.trim() !== "") {
               const event = new Event("input", { bubbles: true });
               input.dispatchEvent(event);
