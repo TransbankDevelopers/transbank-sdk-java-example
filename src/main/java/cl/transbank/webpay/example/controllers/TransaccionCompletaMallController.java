@@ -64,6 +64,8 @@ public class TransaccionCompletaMallController extends BaseController {
     private static final Map<String, String> NAV_COMMIT = createNav(NAV_KEY_REQUEST, NAV_KEY_RESPONSE, NAV_KEY_FORM);
     private static final Map<String, String> NAV_STATUS = createNav(NAV_KEY_REQUEST, NAV_KEY_RESPONSE);
     private static final Map<String, String> NAV_REFUND = NAV_STATUS;
+    private final MallFullTransaction tx;
+
 
     private static Map<String, String> createNav(String... keys) {
         Map<String, String> nav = new LinkedHashMap<>();
@@ -80,8 +82,6 @@ public class TransaccionCompletaMallController extends BaseController {
         }
         return nav;
     }
-
-    private final MallFullTransaction tx;
 
     public TransaccionCompletaMallController() {
         this.tx = new MallFullTransaction(
