@@ -1,18 +1,24 @@
 <div th:replace="~{layout :: layout(~{::content})}">
   <div th:fragment="content">
-    <h1 id="form">Transacción Completa Diferida - Formulario</h1>
+    <h1 id="form">Transacción Completa Mall - Formulario</h1>
     <p>
       En esta primera etapa necesitas obtener los datos esenciales de la tarjeta
-      de crédito del titular. Utiliza el formulario para recolectar esta
-      información de manera segura.
+      de crédito, débito o prepago del titular. Utiliza el formulario para
+      recolectar esta información de manera segura.
     </p>
 
     <div class="tbk-shadow-2 tbk-card">
       <form
-        th:action="@{/transaccion-completa-diferida/create}"
+        th:action="@{/transaccion-completa-mall/create}"
         method="POST"
         id="card-form"
       >
+        <input
+          th:if="${_csrf != null}"
+          type="hidden"
+          th:name="${_csrf.parameterName}"
+          th:value="${_csrf.token}"
+        />
         <div class="card-container">
           <div class="card-wrapper mb-4"></div>
           <div class="card-inputs-container">
@@ -30,8 +36,8 @@
 
             <div class="card-split-inputs">
               <div class="col-6 input-container mb-3">
-                <label for="expiry" class="tbk-label"
-                  >Fecha de Vencimiento (MM/YY)
+                <label for="expiry" class="tbk-label">
+                  Fecha de Vencimiento (MM/YY)
                 </label>
                 <input
                   type="text"
