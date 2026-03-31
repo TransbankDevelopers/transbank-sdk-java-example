@@ -13,6 +13,7 @@
         method="POST"
         id="card-form"
       >
+        <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div class="card-container">
           <div class="card-wrapper mb-4"></div>
           <div class="card-inputs-container">

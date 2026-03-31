@@ -52,6 +52,7 @@ var resp = tx.create(buyOrder, sessionId, cardNumber, cardExpiry, details, cvv);
     </ul>
 
     <form th:action="@{/transaccion-completa-mall/installments}" method="POST">
+      <input th:if="${_csrf != null}" type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
       <div class="tbk-card">
         <span class="tbk-card-title">Formulario de redirección</span>
 
