@@ -2,12 +2,16 @@
   <div th:fragment="content">
     <h1>Transacción Completa Mall Diferido - Consulta de cuotas</h1>
     <p class="mb-32">
-      En esta etapa, realizaremos una consulta de cuotas para conocer sus condiciones. Es importante
-      destacar que este paso es opcional y se utiliza únicamente si deseas ofrecer opciones de pago a plazos.
+      En esta etapa, realizaremos una consulta de cuotas para conocer sus
+      condiciones. Es importante destacar que este paso es opcional y se utiliza
+      únicamente si deseas ofrecer opciones de pago a plazos.
     </p>
 
     <h2 id="request">Paso 1: Petición</h2>
-    <p class="mb-32">Para llevar a cabo la consulta de cuotas, debemos enviar los siguientes datos relevantes.</p>
+    <p class="mb-32">
+      Para llevar a cabo la consulta de cuotas, debemos enviar los siguientes
+      datos relevantes.
+    </p>
 
     <pre class="mb-16"><code class="language-java">
 import cl.transbank.common.IntegrationApiKeys;
@@ -33,45 +37,83 @@ var resp = tx.installments(token, details);
     </code></pre>
 
     <h2 id="response">Paso 2: Respuesta</h2>
-    <p>Una vez realizada la consulta de cuotas, recibirás los siguientes datos de respuesta:</p>
+    <p>
+      Una vez realizada la consulta de cuotas, recibirás los siguientes datos de
+      respuesta:
+    </p>
 
-    <pre class="mb-16"><code class="language-json" th:text="${response_data_json}"></code></pre>
+    <pre
+      class="mb-16"
+    ><code class="language-json" th:text="${response_data_json}"></code></pre>
 
     <h2 id="form">Confirmar Transacción</h2>
     <p class="mb-16">
-      Si decides utilizar cuotas y estás satisfecho con las condiciones obtenidas en la consulta, el
-      siguiente paso sería confirmar la transacción.
+      Si decides utilizar cuotas y estás satisfecho con las condiciones
+      obtenidas en la consulta, el siguiente paso sería confirmar la
+      transacción.
     </p>
 
     <div class="tbk-card">
-      <input type="hidden" id="token" name="token" th:value="${request_token}" />
+      <input
+        type="hidden"
+        id="token"
+        name="token"
+        th:value="${request_token}"
+      />
 
-      <div class="input-container">
-        <label for="idQueryInstallments" class="tbk-label">ID de consulta de cuotas (Opcional)</label>
-        <input type="text" id="idQueryInstallments" name="idQueryInstallments" class="tbk-input-text"
-               th:value="${id_query_installments}" />
+      <div class="input-container mb-16">
+        <label for="idQueryInstallments" class="tbk-label"
+          >ID de consulta de cuotas (Opcional)</label
+        >
+        <input
+          type="text"
+          id="idQueryInstallments"
+          name="idQueryInstallments"
+          class="tbk-input-text"
+          th:value="${id_query_installments}"
+        />
       </div>
 
-      <div class="input-container">
-        <label for="deferredPeriodIndex" class="tbk-label">Indice de periodo diferido (opcional)</label>
-        <input type="text" id="deferredPeriodIndex" name="deferredPeriodIndex" class="tbk-input-text" />
+      <div class="input-container mb-16">
+        <label for="deferredPeriodIndex" class="tbk-label"
+          >Indice de periodo diferido (opcional)</label
+        >
+        <input
+          type="text"
+          id="deferredPeriodIndex"
+          name="deferredPeriodIndex"
+          class="tbk-input-text"
+        />
       </div>
-      <div class="input-container">
-        <label for="gracePeriod" class="tbk-label">Periodo de gracia (opcional)</label>
-        <input type="text" id="gracePeriod" name="gracePeriod" class="tbk-input-text" />
+      <div class="input-container mb-16">
+        <label for="gracePeriod" class="tbk-label"
+          >Periodo de gracia (opcional)</label
+        >
+        <input
+          type="text"
+          id="gracePeriod"
+          name="gracePeriod"
+          class="tbk-input-text"
+        />
       </div>
 
       <div class="tbk-card-footer">
-        <a href="#" id="confirmLink" class="tbk-button primary">CONFIRMAR TRANSACCIÓN</a>
+        <a href="#" id="confirmLink" class="tbk-button primary"
+          >CONFIRMAR TRANSACCIÓN</a
+        >
       </div>
     </div>
 
     <script>
-      const tokenInput = document.getElementById('token');
-      const idQueryInstallmentsInput = document.getElementById('idQueryInstallments');
-      const deferredPeriodIndexInput = document.getElementById('deferredPeriodIndex');
-      const gracePeriodInput = document.getElementById('gracePeriod');
-      const confirmLink = document.getElementById('confirmLink');
+      const tokenInput = document.getElementById("token");
+      const idQueryInstallmentsInput = document.getElementById(
+        "idQueryInstallments",
+      );
+      const deferredPeriodIndexInput = document.getElementById(
+        "deferredPeriodIndex",
+      );
+      const gracePeriodInput = document.getElementById("gracePeriod");
+      const confirmLink = document.getElementById("confirmLink");
 
       const baseUrl = "/transaccion-completa-mall-diferido/commit";
 
@@ -82,17 +124,19 @@ var resp = tx.installments(token, details);
         const gracePeriod = gracePeriodInput.value;
 
         const params = new URLSearchParams();
-        if (token) params.append('token', token);
-        if (idQueryInstallments) params.append('idQueryInstallments', idQueryInstallments);
-        if (deferredPeriodIndex) params.append('deferredPeriodIndex', deferredPeriodIndex);
-        if (gracePeriod) params.append('gracePeriod', gracePeriod);
+        if (token) params.append("token", token);
+        if (idQueryInstallments)
+          params.append("idQueryInstallments", idQueryInstallments);
+        if (deferredPeriodIndex)
+          params.append("deferredPeriodIndex", deferredPeriodIndex);
+        if (gracePeriod) params.append("gracePeriod", gracePeriod);
 
-        confirmLink.href = baseUrl + '?' + params.toString();
+        confirmLink.href = baseUrl + "?" + params.toString();
       }
 
-      idQueryInstallmentsInput.addEventListener('input', updateLink);
-      deferredPeriodIndexInput.addEventListener('input', updateLink);
-      gracePeriodInput.addEventListener('input', updateLink);
+      idQueryInstallmentsInput.addEventListener("input", updateLink);
+      deferredPeriodIndexInput.addEventListener("input", updateLink);
+      gracePeriodInput.addEventListener("input", updateLink);
 
       updateLink();
     </script>
