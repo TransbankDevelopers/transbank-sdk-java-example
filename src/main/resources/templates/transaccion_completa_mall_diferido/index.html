@@ -1,0 +1,128 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1 id="form">Transacción Completa Mall Diferido - Formulario</h1>
+    <p>
+      En esta primera etapa necesitas obtener los datos esenciales de la tarjeta
+      de crédito del titular. Utiliza el formulario para recolectar esta
+      información de manera segura.
+    </p>
+
+    <div class="tbk-shadow-2 tbk-card">
+      <form
+        th:action="@{/transaccion-completa-mall-diferido/create}"
+        method="POST"
+        id="card-form"
+      >
+        <input
+          th:if="${_csrf != null}"
+          type="hidden"
+          th:name="${_csrf.parameterName}"
+          th:value="${_csrf.token}"
+        />
+        <div class="card-container">
+          <div class="card-wrapper mb-4"></div>
+          <div class="card-inputs-container">
+            <div class="input-container mb-3">
+              <label for="number" class="tbk-label">Número de tarjeta</label>
+              <input
+                type="text"
+                id="number"
+                name="number"
+                class="tbk-input-text"
+                required
+                value="4051885600446623"
+              />
+            </div>
+
+            <div class="card-split-inputs">
+              <div class="col-6 input-container mb-3">
+                <label for="expiry" class="tbk-label">
+                  Fecha de Vencimiento (MM/YY)
+                </label>
+                <input
+                  type="text"
+                  id="expiry"
+                  name="expiry"
+                  class="tbk-input-text"
+                  required
+                  value="11/23"
+                />
+              </div>
+              <div class="col-6 input-container mb-3">
+                <label for="cvc" class="tbk-label">CVC</label>
+                <input
+                  type="text"
+                  id="cvc"
+                  name="cvc"
+                  class="tbk-input-text"
+                  required
+                  value="123"
+                />
+                <input
+                  type="hidden"
+                  id="name"
+                  name="name"
+                  class="tbk-input-text"
+                  required
+                  value="test user"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <button type="submit" class="tbk-button primary">Pagar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (
+          typeof Card !== "undefined" &&
+          document.querySelector(".card-wrapper")
+        ) {
+          const card = new Card({
+            form: "#card-form",
+            container: ".card-wrapper",
+            formSelectors: {
+              number: 'input[name="number"]',
+              name: 'input[name="name"]',
+              expiry: 'input[name="expiry"]',
+              cvc: 'input[name="cvc"]',
+            },
+            width: 300,
+            formatting: true,
+            messages: {
+              valid: "válido\n",
+            },
+            placeholders: {
+              number: "•••• •••• •••• ••••",
+              name: "Nombre Completo",
+              expiry: "MM/YY",
+              cvc: "CVC",
+            },
+            defaults: {
+              number: "4051 8856 0044 6623",
+              name: "Nombre Completo",
+              expiry: "11/23",
+              cvc: "123",
+            },
+          });
+
+          const inputs = document.querySelectorAll(
+            'input[name="number"], input[name="expiry"], input[name="cvc"], input[name="name"]',
+          );
+
+          inputs.forEach((input) => {
+            if (input.value && input.value.trim() !== "") {
+              const event = new Event("input", { bubbles: true });
+              input.dispatchEvent(event);
+            }
+          });
+        }
+      });
+    </script>
+  </div>
+</div>
