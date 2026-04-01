@@ -42,9 +42,9 @@ var resp = tx.installments(token, details);
       respuesta:
     </p>
 
-    <pre
-      class="mb-16"
-    ><code class="language-json" th:text="${response_data_json}"></code></pre>
+    <pre class="mb-16">
+      <code class="language-json" th:text="${response_data_json}"></code>
+    </pre>
 
     <h2 id="form">Confirmar Transacción</h2>
     <p class="mb-16">
@@ -62,9 +62,9 @@ var resp = tx.installments(token, details);
       />
 
       <div class="input-container mb-16">
-        <label for="idQueryInstallments" class="tbk-label"
-          >ID de consulta de cuotas (Opcional)</label
-        >
+        <label for="idQueryInstallments" class="tbk-label">
+          ID de consulta de cuotas (Opcional)
+        </label>
         <input
           type="text"
           id="idQueryInstallments"
@@ -75,9 +75,9 @@ var resp = tx.installments(token, details);
       </div>
 
       <div class="input-container mb-16">
-        <label for="deferredPeriodIndex" class="tbk-label"
-          >Indice de periodo diferido (opcional)</label
-        >
+        <label for="deferredPeriodIndex" class="tbk-label">
+          Indice de periodo diferido (opcional)
+        </label>
         <input
           type="text"
           id="deferredPeriodIndex"
@@ -86,9 +86,9 @@ var resp = tx.installments(token, details);
         />
       </div>
       <div class="input-container mb-16">
-        <label for="gracePeriod" class="tbk-label"
-          >Periodo de gracia (opcional)</label
-        >
+        <label for="gracePeriod" class="tbk-label">
+          Periodo de gracia (opcional)
+        </label>
         <input
           type="text"
           id="gracePeriod"
@@ -98,9 +98,9 @@ var resp = tx.installments(token, details);
       </div>
 
       <div class="tbk-card-footer">
-        <a href="#" id="confirmLink" class="tbk-button primary"
-          >CONFIRMAR TRANSACCIÓN</a
-        >
+        <a href="#" id="confirmLink" class="tbk-button primary">
+          CONFIRMAR TRANSACCIÓN
+        </a>
       </div>
     </div>
 
