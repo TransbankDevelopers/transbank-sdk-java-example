@@ -1,0 +1,22 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Patpass Comercio - Voucher</h1>
+        <p class="mb-32">
+            La inscripción ya se encuentra finalizada. Una vez finalizada la inscripción puedes seguir consultando por el voucher.
+        </p>
+
+        <div id="form" class="tbk-card">
+            <span class="tbk-card-title">Voucher</span>
+            <div class="input-container mb-32">
+                <label for="tokenComercio" class="tbk-label">Token</label>
+                <input type="text" id="tokenComercio" class="tbk-input-text" th:value="${token}" disabled />
+            </div>
+            <div class="tbk-card-footer">
+                <form th:action="${voucherUrl}" method="POST">
+                    <input type="hidden" name="tokenComercio" th:value="${token}">
+                    <button class="tbk-button primary">VER VOUCHER</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
