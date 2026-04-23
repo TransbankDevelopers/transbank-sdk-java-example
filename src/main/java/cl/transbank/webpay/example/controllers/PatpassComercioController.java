@@ -245,7 +245,7 @@ public class PatpassComercioController extends BaseController {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
         log.error("Error inesperado", e);
-        model.addAttribute(ERROR_ATTR, e.getMessage());
+        model.addAttribute(ERROR_ATTR, getDisplayableErrorMessage(e));
         return VIEW_ERROR;
     }
 }

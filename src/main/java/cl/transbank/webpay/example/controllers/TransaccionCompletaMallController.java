@@ -276,7 +276,7 @@ public class TransaccionCompletaMallController extends BaseController {
 
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
-        model.addAttribute(ATTR_ERROR, e.getMessage());
+        model.addAttribute(ATTR_ERROR, getDisplayableErrorMessage(e));
         return VIEW_ERROR;
     }
 }

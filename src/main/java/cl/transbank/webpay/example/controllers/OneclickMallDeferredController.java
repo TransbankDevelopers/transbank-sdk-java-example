@@ -299,7 +299,7 @@ public class OneclickMallDeferredController extends BaseController {
     @ExceptionHandler(Exception.class)
     public String handleException(Exception e, Model model) {
         log.error("Error inesperado", e);
-        model.addAttribute("error", e.getMessage());
+        model.addAttribute("error", getDisplayableErrorMessage(e));
         return VIEW_ERROR;
     }
 }
