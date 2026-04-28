@@ -1,5 +1,6 @@
 package cl.transbank.webpay.example.controllers;
 
+import cl.transbank.exception.TransbankException;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
@@ -8,6 +9,8 @@ import java.math.BigDecimal;
 import java.util.Random;
 
 public abstract class BaseController {
+    private static final String GENERIC_ERROR_MESSAGE =
+            "Ocurrió un error inesperado al procesar la operación.";
 
     protected static final String VIEW_ERROR = "error/error_page";
     protected static final String VIEW_ABORTED_ERROR = "error/webpay/aborted";
@@ -34,5 +37,16 @@ public abstract class BaseController {
 
     protected String getRandomNumber() {
         return String.valueOf(new Random().nextInt(Integer.MAX_VALUE));
+    }
+
+    protected String getDisplayableErrorMessage(Exception e) {
+        Throwable current = e;
+        while (current != null) {
+            if (current instanceof TransbankException && current.getMessage() != null && !current.getMessage().isBlank()) {
+                return current.getMessage();
+            }
+            current = current.getCause();
+        }
+        return GENERIC_ERROR_MESSAGE;
     }
 }
