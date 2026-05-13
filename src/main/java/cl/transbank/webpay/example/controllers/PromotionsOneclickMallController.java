@@ -57,15 +57,31 @@ public class PromotionsOneclickMallController extends BaseController {
     private static final String USERNAME = "username";
     private static final String REQUEST_DATA = "request_data";
 
-    private static final Map<String, String> NAV_START;
-    private static final Map<String, String> NAV_FINISH;
-    private static final Map<String, String> NAV_FINISH_RECOVER;
-    private static final Map<String, String> NAV_FINISH_REJECTED;
-    private static final Map<String, String> NAV_AUTHORIZE;
-    private static final Map<String, String> NAV_DELETE;
-    private static final Map<String, String> NAV_STATUS;
-    private static final Map<String, String> NAV_REFUND;
-    private static final Map<String, String> NAV_INFO_BIN;
+    private static final Map<String, String> NAV_START = navigation(
+            REQUEST_KEY, REQUEST,
+            RESPONSE_KEY, RESPONSE,
+            "form", "Creación del formulario",
+            "example", "Ejemplo"
+    );
+    private static final Map<String, String> NAV_FINISH = navigation(
+            "data", DATA_KEY,
+            REQUEST_KEY, REQUEST,
+            RESPONSE_KEY, RESPONSE,
+            "authorize", "Autorizar una transacción"
+    );
+    private static final Map<String, String> NAV_FINISH_RECOVER = navigation("data", DATA_KEY);
+    private static final Map<String, String> NAV_FINISH_REJECTED = navigation(
+            "data", DATA_KEY,
+            REQUEST_KEY, REQUEST,
+            RESPONSE_KEY, RESPONSE
+    );
+    private static final Map<String, String> NAV_AUTHORIZE = navigation(
+            REQUEST_KEY, REQUEST,
+            RESPONSE_KEY, RESPONSE,
+            "done", "Listo"
+    );
+    private static final Map<String, String> NAV_DELETE = navigation(REQUEST_KEY, REQUEST, RESPONSE_KEY, RESPONSE);
+    private static final Map<String, String> NAV_TWO_STEP = navigation(REQUEST_KEY, REQUEST, RESPONSE_KEY, RESPONSE);
     private static final Map<String, String> DOTENV = loadDotenv();
 
     @Value("${oneclick.mall.promotions.api-key:}")
@@ -80,49 +96,10 @@ public class PromotionsOneclickMallController extends BaseController {
     @Value("${oneclick.mall.promotions.child2-commerce-code:}")
     private String child2CommerceCode;
 
-    static {
-        NAV_START = new LinkedHashMap<>();
-        NAV_START.put(REQUEST_KEY, REQUEST);
-        NAV_START.put(RESPONSE_KEY, RESPONSE);
-        NAV_START.put("form", "Creación del formulario");
-        NAV_START.put("example", "Ejemplo");
-
-        NAV_FINISH = new LinkedHashMap<>();
-        NAV_FINISH.put("data", DATA_KEY);
-        NAV_FINISH.put(REQUEST_KEY, REQUEST);
-        NAV_FINISH.put(RESPONSE_KEY, RESPONSE);
-        NAV_FINISH.put("authorize", "Autorizar una transacción");
-
-        NAV_FINISH_RECOVER = new LinkedHashMap<>();
-        NAV_FINISH_RECOVER.put("data", DATA_KEY);
-
-        NAV_FINISH_REJECTED = new LinkedHashMap<>();
-        NAV_FINISH_REJECTED.put("data", DATA_KEY);
-        NAV_FINISH_REJECTED.put(REQUEST_KEY, REQUEST);
-        NAV_FINISH_REJECTED.put(RESPONSE_KEY, RESPONSE);
-
-        NAV_AUTHORIZE = new LinkedHashMap<>();
-        NAV_AUTHORIZE.put(REQUEST_KEY, REQUEST);
-        NAV_AUTHORIZE.put(RESPONSE_KEY, RESPONSE);
-        NAV_AUTHORIZE.put("done", "Listo");
-
-        NAV_DELETE = new LinkedHashMap<>();
-        NAV_DELETE.put(REQUEST_KEY, REQUEST);
-        NAV_DELETE.put(RESPONSE_KEY, RESPONSE);
-
-        NAV_STATUS = new LinkedHashMap<>();
-        NAV_STATUS.put(REQUEST_KEY, REQUEST);
-        NAV_STATUS.put(RESPONSE_KEY, RESPONSE);
-
-        NAV_REFUND = NAV_STATUS;
-        NAV_INFO_BIN = NAV_STATUS;
-    }
-
     @GetMapping({"", "/", "/start"})
     public String start(HttpServletRequest req, Model model)
             throws IOException, InscriptionStartException {
-        model.addAttribute(MODEL_NAVIGATION, NAV_START);
-        addBreadcrumbs(model, "Iniciar inscripción", "#");
+        addPageMetadata(model, NAV_START, "Iniciar inscripción");
 
         String username = "User-" + getRandomNumber();
         String email = "user." + getRandomNumber() + "@example.com";
@@ -155,11 +132,10 @@ public class PromotionsOneclickMallController extends BaseController {
                          @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String ordenCompra,
                          Model model)
             throws IOException, InscriptionFinishException {
-        model.addAttribute(MODEL_NAVIGATION, NAV_FINISH);
-        addBreadcrumbs(model, "Finalizar inscripción", "#");
+        addPageMetadata(model, NAV_FINISH, "Finalizar inscripción");
 
         if (ordenCompra != null) {
-            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_RECOVER);
+            addNavigation(model, NAV_FINISH_RECOVER);
             model.addAttribute(REQUEST_DATA_JSON, toJson(params));
             return VIEW_RECOVER_ERROR;
         }
@@ -171,7 +147,7 @@ public class PromotionsOneclickMallController extends BaseController {
         model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
 
         if (resp.getResponseCode() != AUTHORIZED) {
-            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_REJECTED);
+            addNavigation(model, NAV_FINISH_REJECTED);
             model.addAttribute(REQUEST_DATA_JSON, toJson(params));
             return VIEW_REJECTED_ERROR;
         }
@@ -196,8 +172,7 @@ public class PromotionsOneclickMallController extends BaseController {
                          @RequestParam("tbk_user") String tbkUser,
                          Model model)
             throws IOException, InscriptionDeleteException {
-        model.addAttribute(MODEL_NAVIGATION, NAV_DELETE);
-        addBreadcrumbs(model, "Eliminar inscripción", "#");
+        addPageMetadata(model, NAV_DELETE, "Eliminar inscripción");
         getInscription().delete(tbkUser, username);
         return VIEW_DELETE;
     }
@@ -214,8 +189,7 @@ public class PromotionsOneclickMallController extends BaseController {
             @RequestParam("child_commerce_installments2") int installments2,
             Model model)
             throws IOException, TransactionAuthorizeException {
-        model.addAttribute(MODEL_NAVIGATION, NAV_AUTHORIZE);
-        addBreadcrumbs(model, "Autorizar transacción", "#");
+        addPageMetadata(model, NAV_AUTHORIZE, "Autorizar transacción");
 
         String buyOrder = "buyOrder_" + getRandomNumber();
         String childBuyOrder1 = "childBuyOrder1_" + getRandomNumber();
@@ -235,8 +209,7 @@ public class PromotionsOneclickMallController extends BaseController {
     @GetMapping("/status")
     public String status(@RequestParam("buy_order") String buyOrder, Model model)
             throws IOException, TransactionStatusException {
-        model.addAttribute(MODEL_NAVIGATION, NAV_STATUS);
-        addBreadcrumbs(model, "Consultar estado", "#");
+        addPageMetadata(model, NAV_TWO_STEP, "Consultar estado");
         var resp = getTransaction().status(buyOrder);
         model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
         return VIEW_STATUS;
@@ -247,10 +220,9 @@ public class PromotionsOneclickMallController extends BaseController {
                          @RequestParam("child_buy_order") String childBuyOrder,
                          @RequestParam("child_commerce_code") String childCommerceCode,
                          @RequestParam double amount,
-                         Model model)
+            Model model)
             throws IOException, TransactionRefundException {
-        model.addAttribute(MODEL_NAVIGATION, NAV_REFUND);
-        addBreadcrumbs(model, "Reembolso", "#");
+        addPageMetadata(model, NAV_TWO_STEP, "Reembolso");
         var resp = getTransaction().refund(buyOrder, childCommerceCode, childBuyOrder, amount);
         model.addAttribute("buy_order", buyOrder);
         model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
@@ -260,8 +232,7 @@ public class PromotionsOneclickMallController extends BaseController {
     @GetMapping("/info-bin")
     public String infoBin(@RequestParam("tbk_user") String tbkUser, Model model)
             throws IOException, QueryBinException {
-        model.addAttribute(MODEL_NAVIGATION, NAV_INFO_BIN);
-        addBreadcrumbs(model, "Consulta servicio de bines", "#");
+        addPageMetadata(model, NAV_TWO_STEP, "Consulta servicio de bines");
         var requestData = Map.of(TBK_USER, tbkUser);
         var resp = getBinInfo().queryBin(tbkUser);
         model.addAttribute(REQUEST_DATA, requestData);
@@ -275,6 +246,15 @@ public class PromotionsOneclickMallController extends BaseController {
         log.error("Error inesperado", e);
         model.addAttribute("error", getDisplayableErrorMessage(e));
         return VIEW_ERROR;
+    }
+
+    private void addPageMetadata(Model model, Map<String, String> navigation, String label) {
+        addNavigation(model, navigation);
+        addBreadcrumbs(model, label, "#");
+    }
+
+    private void addNavigation(Model model, Map<String, String> navigation) {
+        model.addAttribute(MODEL_NAVIGATION, navigation);
     }
 
     private void addBreadcrumbs(Model model, String label, String url) {

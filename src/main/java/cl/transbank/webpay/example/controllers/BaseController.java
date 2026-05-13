@@ -6,6 +6,8 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 public abstract class BaseController {
@@ -48,5 +50,13 @@ public abstract class BaseController {
             current = current.getCause();
         }
         return GENERIC_ERROR_MESSAGE;
+    }
+
+    protected static Map<String, String> navigation(String... entries) {
+        Map<String, String> navigation = new LinkedHashMap<>();
+        for (int i = 0; i < entries.length; i += 2) {
+            navigation.put(entries[i], entries[i + 1]);
+        }
+        return navigation;
     }
 }
