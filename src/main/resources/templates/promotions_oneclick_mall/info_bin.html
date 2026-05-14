@@ -1,0 +1,24 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Webpay Oneclick Mall Promociones - Consulta servicio de bines</h1>
+    <p class="mb-32">
+      Con esta operación puedes consultar el BIN asociado al medio de pago
+      inscrito usando el valor de <code>tbkUser</code>. Si el comercio no tiene
+      habilitado este servicio, la respuesta incluirá un error.
+    </p>
+    <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">
+      Para realizar la consulta, necesitarás el <code>tbkUser</code> obtenido al
+      finalizar la inscripción.
+    </p>
+    <pre
+      class="mb-32"
+    ><code class="language-java">var resp = binInfo.queryBin(tbkUser);</code></pre>
+    <div th:replace="~{partials/table :: table(${request_data})}"></div>
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p class="mb-32">
+      Transbank responderá con la información del BIN consultado.
+    </p>
+    <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
+  </div>
+</div>

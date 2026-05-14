@@ -1,0 +1,39 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Webpay Oneclick Mall Promociones - Reembolsar</h1>
+    <p class="mb-32">
+      En esta etapa, tienes la opción de solicitar el reembolso del monto al
+      titular de la tarjeta.
+    </p>
+    <h2 id="request">Paso 1 - Petición</h2>
+    <p class="mb-32">
+      Para llevar a cabo el reembolso, necesitas la orden de compra, el código
+      de comercio(tienda), la orden de compra(tienda) y el monto.
+    </p>
+    <p class="mb-32">
+      En
+      <a
+        href="https://www.transbankdevelopers.cl/producto/webpay#anulaciones-y-reversas"
+        class="tbk-link"
+        target="_blank"
+        rel="noopener noreferrer"
+        >este link</a
+      >
+      podrás ver mayor información sobre las condiciones y casos para anular o
+      reversar transacciones.
+    </p>
+    <pre><code class="language-java">var resp = transaction.refund(buyOrder, childCommerceCode, childBuyOrder, amount);</code></pre>
+    <h2 id="response" class="mt-32">Paso 2: Respuesta</h2>
+    <p class="mb-32">
+      Transbank responderá con el resultado del proceso de reembolso.
+    </p>
+    <pre
+      class="mb-32"
+    ><code class="language-json" th:text="${response_data_json}"></code></pre>
+    <a
+      class="tbk-button primary mb-32"
+      th:href="@{/promotions-oneclick-mall/status(buy_order=${buy_order})}"
+      >CONSULTAR ESTADO</a
+    >
+  </div>
+</div>

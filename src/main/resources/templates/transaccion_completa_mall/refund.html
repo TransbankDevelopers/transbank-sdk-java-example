@@ -1,0 +1,44 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Transacción Completa Mall - Reembolsar</h1>
+    <p class="mb-32">
+      En esta etapa, tendrás la posibilidad de solicitar el reembolso del dinero al tarjeta habiente. El
+      tipo de reembolso (Reversa, Anulación o Anulación parcial) dependerá del monto y el tiempo transcurrido desde la
+      transacción.
+    </p>
+
+    <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">
+      Para efectuar la solicitud de reembolso, necesitarás el token de la transacción, el buy order del detalle,
+      el commerce code hijo y el monto que deseas reversar.
+    </p>
+
+    <pre class="mb-16"><code class="language-java">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.transaccioncompleta.MallFullTransaction;
+
+MallFullTransaction tx = new MallFullTransaction(
+  new WebpayOptions(
+    IntegrationCommerceCodes.TRANSACCION_COMPLETA_MALL,
+    IntegrationApiKeys.WEBPAY,
+    IntegrationType.TEST
+  )
+);
+
+var resp = tx.refund(token, buyOrder, childCommerceCode, amount);
+    </code></pre>
+
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p>
+      Transbank responderá con el resultado de la reversa o anulación. Evalúa cuidadosamente esta respuesta para
+      confirmar que el reembolso se haya procesado de manera efectiva.
+    </p>
+
+    <pre class="mb-16"><code class="language-json" th:text="${response_data_json}"></code></pre>
+
+    <a th:href="@{/transaccion-completa-mall/status(token=${request_token})}" class="tbk-button primary mb-32">CONSULTAR ESTADO</a>
+  </div>
+</div>

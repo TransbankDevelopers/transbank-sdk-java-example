@@ -1,0 +1,89 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Patpass Comercio - Iniciar Transacción</h1>
+        <p class="mb-16">
+            En este paso inicial, procederemos a inscribir una tarjeta con el objetivo de obtener un identificador único.
+            Esto nos permitirá redirigir al Tarjetahabiente hacia el formulario de inscripción en el siguiente paso.
+        </p>
+
+        <p class="mb-32">
+            Todas las transacciones de este proyecto ejemplo son realizadas en ambiente de integración.
+        </p>
+
+        <h2 id="request">Paso 1: Petición</h2>
+        <p class="mb-32">
+            Para comenzar, importa la librería PatpassComercio y luego inicia una inscripción. Tener en cuenta:
+            el ambiente de integración no admite direcciones locales en los atributos <code>url</code> y <code>finalUrl</code>.
+        </p>
+
+        <pre><code class="language-java mb-32">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.patpass.PatpassComercio;
+
+var inscription = PatpassComercio.Inscription.buildForIntegration(
+    IntegrationCommerceCodes.PATPASS_COMERCIO,
+    IntegrationApiKeys.PATPASS_COMERCIO
+);
+
+var resp = inscription.start(
+    returnUrl,
+    name,
+    lastName,
+    secondLastName,
+    rut,
+    serviceId,
+    finalUrl,
+    maxAmount,
+    phone,
+    cellPhone,
+    patpassName,
+    personEmail,
+    commerceEmail,
+    address,
+    city
+);
+        </code></pre>
+
+        <h2 id="response">Paso 2: Respuesta</h2>
+        <p class="mb-32">
+            Una vez iniciada la inscripción, recibirás los siguientes datos de respuesta:
+        </p>
+
+        <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
+
+        <h2 id="form">Paso 3: Creación del formulario</h2>
+        <p class="mb-32">
+            Utiliza los datos obtenidos durante la inscripción para generar un formulario, proporcionando al
+            Tarjetahabiente una experiencia de inscripción fluida y segura.
+        </p>
+
+        <pre><code class="language-html mb-32"
+ th:text="'<form action=&quot;' + ${response_data.url} + '&quot; method=&quot;POST&quot;>
+  <input type=&quot;hidden&quot; name=&quot;tokenComercio&quot; value=&quot;' + ${response_data.token} + '&quot; />
+  <input type=&quot;submit&quot; value=&quot;Inscribir&quot; />
+</form>'">
+</code></pre>
+
+        <h2 id="example">Ejemplo</h2>
+        <p class="mb-32">
+            Para poder iniciar la inscripción, se necesitan los siguientes datos:
+        </p>
+
+        <div th:replace="~{partials/table :: table(${request_data})}"></div>
+
+        <form th:action="${response_data.url}" method="POST">
+            <div class="tbk-card">
+                <span class="tbk-card-title">Formulario de redirección</span>
+                <div class="input-container mb-32">
+                    <label for="tokenComercio" class="tbk-label">Token</label>
+                    <input type="text" id="tokenComercio" class="tbk-input-text" th:value="${response_data.token}" disabled />
+                    <input type="hidden" name="tokenComercio" th:value="${response_data.token}" />
+                </div>
+                <div class="tbk-card-footer">
+                    <button class="tbk-button primary">INSCRIBIR</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

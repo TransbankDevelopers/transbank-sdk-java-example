@@ -1,0 +1,44 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Transacción Completa Mall - Estado de transacción</h1>
+    <p class="mb-32">
+      En esta fase, tendrás la capacidad de solicitar el estado actual de una transacción hasta 7 días
+      después de su realización. Es importante destacar que no hay límite en la cantidad de solicitudes de este tipo
+      durante este período. Sin embargo, una vez transcurridos los 7 días, ya no podrás revisar el estado de la
+      transacción.
+    </p>
+
+    <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">
+      Para llevar a cabo la solicitud de estado, necesitarás el token correspondiente a la transacción
+      de la cual deseas obtener información. Utiliza este token para realizar una llamada a
+      MallFullTransaction.status().
+    </p>
+
+    <pre class="mb-16"><code class="language-java">
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.transaccioncompleta.MallFullTransaction;
+
+MallFullTransaction tx = new MallFullTransaction(
+  new WebpayOptions(
+    IntegrationCommerceCodes.TRANSACCION_COMPLETA_MALL,
+    IntegrationApiKeys.WEBPAY,
+    IntegrationType.TEST
+  )
+);
+
+var resp = tx.status(token);
+    </code></pre>
+
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p>
+      Transbank responderá con la siguiente información. Asegúrate de guardar estos detalles; lo único que necesitas
+      validar es que el campo "response_code" sea igual a cero.
+    </p>
+
+    <pre class="mb-16"><code class="language-json" th:text="${response_data_json}"></code></pre>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+    <div th:fragment="content">
+        <h1>Patpass Comercio - Confirmar Registro</h1>
+        <p class="mb-32">
+            Es necesario confirmar el registro; este solo se puede hacer una sola vez o retornará error.
+        </p>
+
+        <h2 id="data">Paso 1: Datos recibidos</h2>
+        <p class="mb-32">
+            Luego de que se termina el flujo en el formulario de inscripción recibirás un POST con la siguiente respuesta.
+        </p>
+
+        <pre><code class="language-json mb-32">
+{
+  "J_TOKEN": "<span th:text="${token}"></span>"
+}
+        </code></pre>
+
+        <h2 id="request">Paso 2: Petición</h2>
+        <p class="mb-32">
+            Usarás el token recibido para confirmar la inscripción usando el método status de PatpassComercio.
+        </p>
+
+        <pre><code class="language-java mb-32">
+var response = inscription.status(token);
+        </code></pre>
+
+        <h2 id="response">Paso 3: Respuesta</h2>
+        <p class="mb-32">
+            Transbank contestará con lo siguiente. Debes guardar esta información; lo importante es validar que
+            el atributo authorized sea igual a true.
+        </p>
+
+        <pre><code class="language-json mb-32" th:text="${response_payload_json}"></code></pre>
+
+        <h2 id="form">¡Listo!</h2>
+        <p class="mb-32">
+            Una vez realizada la inscripción y confirmada, puedes visualizar el voucher.
+        </p>
+
+        <div class="tbk-card">
+            <span class="tbk-card-title">Formulario de redirección</span>
+            <div class="input-container mb-32">
+                <label for="tokenComercio" class="tbk-label">Token</label>
+                <input type="text" id="tokenComercio" class="tbk-input-text" th:value="${token}" disabled />
+            </div>
+            <div class="tbk-card-footer">
+                <form th:action="${voucherUrl}" method="POST">
+                    <input type="hidden" name="tokenComercio" th:value="${token}">
+                    <button class="tbk-button primary">VER VOUCHER</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

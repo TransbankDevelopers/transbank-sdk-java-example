@@ -1,0 +1,12 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Webpay Oneclick Mall Promociones - Borrar usuario</h1>
+    <p class="mb-32">En este paso fundamental, procederemos a eliminar la inscripción del usuario y su medio de pago.</p>
+    <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">Para llevar a cabo la eliminación, necesitas el "username" y el "tbkUser".</p>
+    <pre><code class="language-java mb-32">inscription.delete(tbkUser, username);</code></pre>
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p class="mb-32">En caso de éxito, Transbank responderá con un status code 204 (No Content), y el SDK no retornará ningún valor.</p>
+    <p class="mb-32">En el caso de que no se encuentre el "username" o el "tbkUser", el SDK lanzará una excepción del tipo <strong>TransbankException</strong>.</p>
+  </div>
+</div>

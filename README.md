@@ -22,6 +22,15 @@ mvn clean install
 
 ## Ejecución
 
+El flujo `Webpay Oneclick Mall Promociones` usa estas variables de entorno:
+
+```bash
+ONECLICK_MALL_PROMOTIONS_API_KEY=tu-api-key
+ONECLICK_MALL_PROMOTIONS_COMMERCE_CODE=tu-commerce-code
+ONECLICK_MALL_PROMOTIONS_CHILD1_COMMERCE_CODE=tu-child-commerce-code-1
+ONECLICK_MALL_PROMOTIONS_CHILD2_COMMERCE_CODE=tu-child-commerce-code-2
+```
+
 Para poder correr el proyecto en modo desarrollo, debes utilizar el siguiente comando en una consola:
 
 ```bash
