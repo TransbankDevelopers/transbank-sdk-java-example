@@ -13,3 +13,4 @@ Test.java
 build
 gradle
 .DS_Store
+.env

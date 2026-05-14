@@ -1,0 +1,12 @@
+<div th:replace="~{layout :: layout(~{::content})}">
+  <div th:fragment="content">
+    <h1>Webpay Oneclick Mall Promociones - Consultar estado de transacción</h1>
+    <p class="mb-32">Puedes solicitar el estado de una transacción hasta 7 días después de su realización. No hay límite de solicitudes durante ese período.</p>
+    <h2 id="request">Paso 1 - Petición:</h2>
+    <p class="mb-32">Para realizar la consulta, necesitarás el <strong>buyOrder</strong> de la transacción de interés.</p>
+    <pre><code class="language-java">var response = transaction.status(buyOrder);</code></pre>
+    <h2 id="response">Paso 2: Respuesta</h2>
+    <p class="mb-32">Transbank responderá con la siguiente información.</p>
+    <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
+  </div>
+</div>

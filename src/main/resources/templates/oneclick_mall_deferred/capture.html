@@ -1,21 +1,21 @@
 <div th:replace="~{layout :: layout(~{::content})}">
-    <div th:fragment="content">
+  <div th:fragment="content">
+    <h1>Webpay Oneclick Mall Diferido - Capturar transacción diferida</h1>
 
-        <h1>Webpay Oneclick Mall Diferido - Capturar transacción diferida</h1>
+    <p class="mb-32">
+      En este paso debemos capturar la transacción para realmente capturar el
+      dinero que había sido previamente reservado al hacer la transacción.
+    </p>
 
-        <p class="mb-32">
-            En este paso debemos capturar la transacción para realmente capturar el dinero que había sido
-            previamente reservado al hacer la transacción.
-        </p>
+    <h2 id="request">Paso 1: Petición</h2>
 
-        <h2 id="request">Paso 1: Petición</h2>
+    <p class="mb-32">
+      Para capturar una transacción necesitaremos el código de comercio de la
+      tienda, la orden de compra de la tienda, el código de autorización y el
+      monto a capturar. Se hace de la siguiente manera:
+    </p>
 
-        <p class="mb-32">
-            Para capturar una transacción necesitaremos el código de comercio de la tienda hija, la orden de compra
-            de la tienda hija, el código de autorización y el monto a capturar. Se hace de la siguiente manera:
-        </p>
-
-        <pre><code class="language-java">
+    <pre><code class="language-java">
 var options = new WebpayOptions(
     IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED,
     IntegrationApiKeys.WEBPAY,
@@ -25,58 +25,69 @@ var transaction = new Oneclick.MallTransaction(options);
 var response = transaction.capture(childCommerceCode, childBuyOrder, authorizationCode, amount);
     </code></pre>
 
-        <h2 id="response" class="mt-32">Paso 2: Respuesta</h2>
+    <h2 id="response" class="mt-32">Paso 2: Respuesta</h2>
 
-        <p class="mb-32">
-            Una vez creada la transacción, recibirás los siguientes datos de respuesta:
-        </p>
+    <p class="mb-32">
+      Una vez creada la transacción, recibirás los siguientes datos de
+      respuesta:
+    </p>
 
-        <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
+    <pre><code class="language-json mb-32" th:text="${response_data_json}"></code></pre>
 
-        <h2 id="operations" class="mt-32">¡Transacción Capturada!</h2>
-        <p>
-            Con la transacción capturada, puedes mostrar al usuario una página de éxito de la transacción,
-            proporcionándole la confirmación de que el proceso se ha completado con éxito.
-        </p>
-        <p>
-            <strong>Otras Utilidades: </strong>Después de confirmar la transacción, considera las siguientes utilidades
-            adicionales:
-        </p>
-        <p>
-            <strong>Reembolso: </strong> Evalúa la posibilidad de reversar o anular el pago según ciertas condiciones
-            comerciales.
-        </p>
-        <p class="mb-32">
-            <strong>Consulta de Estado: </strong>Hasta 7 días después de la transacción, puedes consultar su estado para
-            obtener más detalles.
-        </p>
+    <h2 id="operations" class="mt-32">¡Transacción Capturada!</h2>
+    <p>
+      Con la transacción capturada, puedes mostrar al usuario una página de
+      éxito de la transacción, proporcionándole la confirmación de que el
+      proceso se ha completado con éxito.
+    </p>
+    <p>
+      <strong>Otras Utilidades: </strong>Después de confirmar la transacción,
+      considera las siguientes utilidades adicionales:
+    </p>
+    <p>
+      <strong>Reembolso: </strong> Evalúa la posibilidad de reversar o anular el
+      pago según ciertas condiciones comerciales.
+    </p>
+    <p class="mb-32">
+      <strong>Consulta de Estado: </strong>Hasta 7 días después de la
+      transacción, puedes consultar su estado para obtener más detalles.
+    </p>
 
-        <form th:action="@{/oneclick-mall-deferred/refund}" method="get">
-            <input type="hidden" name="buy_order" th:value="${buy_order}"/>
-            <input type="hidden" name="child_buy_order" th:value="${child_buy_order}"/>
-            <input type="hidden" name="child_commerce_code" th:value="${child_commerce_code}"/>
+    <form th:action="@{/oneclick-mall-deferred/refund}" method="get">
+      <input type="hidden" name="buy_order" th:value="${buy_order}" />
+      <input
+        type="hidden"
+        name="child_buy_order"
+        th:value="${child_buy_order}"
+      />
+      <input
+        type="hidden"
+        name="child_commerce_code"
+        th:value="${child_commerce_code}"
+      />
 
-            <div class="tbk-refund-card mb-32">
-                <div class="input-container">
-                    <label class="tbk-label" for="amount">Monto a reembolsar:</label>
-                    <input
-                            type="text"
-                            id="amount"
-                            name="amount"
-                            class="tbk-input-text"
-                            th:value="${response_data.capturedAmount}"
-                    />
-                </div>
+      <div class="tbk-refund-card mb-32">
+        <div class="input-container">
+          <label class="tbk-label" for="amount">Monto a reembolsar:</label>
+          <input
+            type="text"
+            id="amount"
+            name="amount"
+            class="tbk-input-text"
+            th:value="${response_data.capturedAmount}"
+          />
+        </div>
 
-                <div class="tbk-refund-button-container">
-                    <button type="submit" class="tbk-button primary">REEMBOLSAR</button>
-                    <a class="tbk-button primary"
-                       th:href="@{/oneclick-mall-deferred/status(buy_order=${buy_order})}">
-                        CONSULTAR ESTADO
-                    </a>
-                </div>
-            </div>
-        </form>
-
-    </div>
+        <div class="tbk-refund-button-container">
+          <button type="submit" class="tbk-button primary">REEMBOLSAR</button>
+          <a
+            class="tbk-button primary"
+            th:href="@{/oneclick-mall-deferred/status(buy_order=${buy_order})}"
+          >
+            CONSULTAR ESTADO
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
