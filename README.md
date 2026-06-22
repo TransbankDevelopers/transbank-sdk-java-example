@@ -12,6 +12,8 @@ Proyecto de ejemplo mostrando el paso a paso de como usar el SDK Java de transba
 - Thymeleaf
 - Lombok
 
+El contenedor de desarrollo usa Java 21 para el editor, las extensiones y el entorno de ejecución, pero el proyecto sigue compilando para Java 17 según `pom.xml`.
+
 ## Instalación
 
 Una vez tengas clonado el repositorio, debes instalar las dependencias del proyecto. Corre los siguientes comandos en una terminal para instalar las dependencias:
