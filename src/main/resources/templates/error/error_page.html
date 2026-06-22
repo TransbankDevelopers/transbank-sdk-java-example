@@ -5,14 +5,14 @@
             <h1>¡Ups! Algo salió mal</h1>
             <p class="mb-32">Lo sentimos, ha ocurrido un error inesperado. Si el problema persiste comunícate con
                 nosotros en
-                nuestro canal de <a class="tbk-link" href="https://invitacion-slack.transbankdevelopers.cl/slack_community"
-                                    target="_blank">slack</a>
+                nuestro canal de <a class="tbk-link"
+                    href="https://invitacion-slack.transbankdevelopers.cl/slack_community" target="_blank">slack</a>
             </p>
 
             <div class="table-column mb-32" th:if="${error}">
                 <p>Detalles del error (solo para depuración):</p>
                 <div class="error-details">
-                    <div class="error-details" th:text="${error}"></div>
+                    <pre><code class="language-java" th:text="${error}"></code></pre>
                 </div>
             </div>
 
