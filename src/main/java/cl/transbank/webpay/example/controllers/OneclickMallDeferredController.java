@@ -1,14 +1,9 @@
 package cl.transbank.webpay.example.controllers;
 
-import cl.transbank.common.IntegrationApiKeys;
-import cl.transbank.common.IntegrationCommerceCodes;
-import cl.transbank.common.IntegrationType;
-import cl.transbank.webpay.common.WebpayOptions;
-import cl.transbank.webpay.exception.*;
-import cl.transbank.webpay.oneclick.Oneclick;
-import cl.transbank.webpay.oneclick.model.MallTransactionCreateDetails;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.log4j.Log4j2;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,9 +11,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import cl.transbank.common.IntegrationApiKeys;
+import cl.transbank.common.IntegrationCommerceCodes;
+import cl.transbank.common.IntegrationType;
+import cl.transbank.webpay.common.WebpayOptions;
+import cl.transbank.webpay.exception.InscriptionDeleteException;
+import cl.transbank.webpay.exception.InscriptionFinishException;
+import cl.transbank.webpay.exception.InscriptionStartException;
+import cl.transbank.webpay.exception.TransactionAuthorizeException;
+import cl.transbank.webpay.exception.TransactionCaptureException;
+import cl.transbank.webpay.exception.TransactionRefundException;
+import cl.transbank.webpay.exception.TransactionStatusException;
+import cl.transbank.webpay.oneclick.Oneclick;
+import cl.transbank.webpay.oneclick.model.MallTransactionCreateDetails;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Controller
@@ -29,9 +36,9 @@ public class OneclickMallDeferredController extends BaseController {
     private static final String TEMPLATE_FOLDER = "oneclick_mall_deferred";
     private static final String BASE_URL = "/oneclick-mall-deferred";
     private static final String PRODUCT = "Webpay Oneclick Mall Diferido";
-    private static final String MODEL_NAVIGATION =  "navigation";
-    private static final String MODEL_RESPONSE =  "response_data";
-    private static final String MODEL_RESPONSE_JSON =  "response_data_json";
+    private static final String MODEL_NAVIGATION = "navigation";
+    private static final String MODEL_RESPONSE = "response_data";
+    private static final String MODEL_RESPONSE_JSON = "response_data_json";
 
     private static final String VIEW_START = TEMPLATE_FOLDER + "/start";
     private static final String VIEW_FINISH = TEMPLATE_FOLDER + "/finish";
@@ -96,8 +103,7 @@ public class OneclickMallDeferredController extends BaseController {
         var options = new WebpayOptions(
                 IntegrationCommerceCodes.ONECLICK_MALL_DEFERRED,
                 IntegrationApiKeys.WEBPAY,
-                IntegrationType.TEST
-        );
+                IntegrationType.TEST);
         inscription = new Oneclick.MallInscription(options);
         transaction = new Oneclick.MallTransaction(options);
     }
@@ -106,12 +112,13 @@ public class OneclickMallDeferredController extends BaseController {
         Map<String, String> breadcrumbs = new LinkedHashMap<>();
         breadcrumbs.put("Inicio", "/");
         breadcrumbs.put(PRODUCT, BASE_URL + "/");
-        if (label != null) breadcrumbs.put(label, url);
+        if (label != null)
+            breadcrumbs.put(label, url);
         model.addAttribute("product", PRODUCT);
         model.addAttribute("breadcrumbs", breadcrumbs);
     }
 
-    @GetMapping("/")
+    @GetMapping({ "/start" })
     public String start(HttpServletRequest req, Model model)
             throws IOException, InscriptionStartException {
 
@@ -120,15 +127,14 @@ public class OneclickMallDeferredController extends BaseController {
 
         String username = "user_" + getRandomNumber();
         String email = "user." + getRandomNumber() + "@example.com";
-        String returnUrl = req.getRequestURL().toString() + "finish";
+        String returnUrl = req.getRequestURL().toString().replace("start", "finish");
 
         var resp = inscription.start(username, email, returnUrl);
 
         model.addAttribute("request_data", Map.of(
                 "username", username,
                 "email", email,
-                "returnUrl", returnUrl
-        ));
+                "returnUrl", returnUrl));
         model.addAttribute(MODEL_RESPONSE, resp);
         model.addAttribute(MODEL_RESPONSE_JSON, toJson(resp));
         model.addAttribute("url", resp.getUrlWebpay());
@@ -142,17 +148,17 @@ public class OneclickMallDeferredController extends BaseController {
 
     @GetMapping("/finish")
     public String finish(HttpServletRequest req,
-                         @RequestParam Map<String, String> params,
-                         @RequestParam(name = "TBK_TOKEN", required = false) String token,
-                         @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String ordenCompra,
-                         Model model)
+            @RequestParam Map<String, String> params,
+            @RequestParam(name = "TBK_TOKEN", required = false) String token,
+            @RequestParam(name = "TBK_ORDEN_COMPRA", required = false) String ordenCompra,
+            Model model)
             throws IOException, InscriptionFinishException {
 
-        model.addAttribute(MODEL_NAVIGATION, NAV_FINISH);        
+        model.addAttribute(MODEL_NAVIGATION, NAV_FINISH);
         addBreadcrumbs(model, "Finalizar inscripción", "#");
 
         if (ordenCompra != null) {
-            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_RECOVER); 
+            model.addAttribute(MODEL_NAVIGATION, NAV_FINISH_RECOVER);
             model.addAttribute("request_data_json", toJson(params));
             return VIEW_RECOVER_ERROR;
         }
@@ -172,8 +178,7 @@ public class OneclickMallDeferredController extends BaseController {
         req.getSession().setAttribute("tbkUser", resp.getTbkUser());
         model.addAttribute("request_data", Map.of(
                 "username", username,
-                "tbkUser", resp.getTbkUser()
-        ));
+                "tbkUser", resp.getTbkUser()));
         model.addAttribute("token", token);
         model.addAttribute("username", username);
         model.addAttribute("tbk_user", resp.getTbkUser());
@@ -185,11 +190,11 @@ public class OneclickMallDeferredController extends BaseController {
 
     @GetMapping("/delete")
     public String delete(@RequestParam String username,
-                         @RequestParam("tbk_user") String tbkUser,
-                         Model model)
+            @RequestParam("tbk_user") String tbkUser,
+            Model model)
             throws IOException, InscriptionDeleteException {
 
-        model.addAttribute(MODEL_NAVIGATION, NAV_DELETE); 
+        model.addAttribute(MODEL_NAVIGATION, NAV_DELETE);
         addBreadcrumbs(model, "Eliminar inscripción", "#");
 
         inscription.delete(tbkUser, username);
@@ -211,7 +216,7 @@ public class OneclickMallDeferredController extends BaseController {
             Model model)
             throws IOException, TransactionAuthorizeException {
 
-        model.addAttribute(MODEL_NAVIGATION, NAV_AUTHORIZE); 
+        model.addAttribute(MODEL_NAVIGATION, NAV_AUTHORIZE);
         addBreadcrumbs(model, "Autorizar transacción", "#");
 
         String buyOrder = "buyOrder_" + getRandomNumber();
@@ -224,14 +229,12 @@ public class OneclickMallDeferredController extends BaseController {
                         amount1,
                         childCode1,
                         childBuyOrder1,
-                        (byte) installments1
-                )
+                        (byte) installments1)
                 .add(
                         amount2,
                         childCode2,
                         childBuyOrder2,
-                        (byte) installments2
-                );
+                        (byte) installments2);
 
         var resp = transaction.authorize(username, tbkUser, buyOrder, details);
 
@@ -244,8 +247,8 @@ public class OneclickMallDeferredController extends BaseController {
     @GetMapping("/status")
     public String status(@RequestParam("buy_order") String buyOrder, Model model)
             throws IOException, TransactionStatusException {
-        
-        model.addAttribute(MODEL_NAVIGATION, NAV_STATUS);        
+
+        model.addAttribute(MODEL_NAVIGATION, NAV_STATUS);
         addBreadcrumbs(model, "Consultar estado", "#");
 
         var resp = transaction.status(buyOrder);
@@ -256,13 +259,13 @@ public class OneclickMallDeferredController extends BaseController {
 
     @GetMapping("/refund")
     public String refund(@RequestParam("buy_order") String buyOrder,
-                         @RequestParam("child_buy_order") String childBuyOrder,
-                         @RequestParam("child_commerce_code") String childCommerceCode,
-                         @RequestParam double amount,
-                         Model model)
+            @RequestParam("child_buy_order") String childBuyOrder,
+            @RequestParam("child_commerce_code") String childCommerceCode,
+            @RequestParam double amount,
+            Model model)
             throws IOException, TransactionRefundException {
 
-        model.addAttribute(MODEL_NAVIGATION, NAV_REFUND);        
+        model.addAttribute(MODEL_NAVIGATION, NAV_REFUND);
         addBreadcrumbs(model, "Reembolso", "#");
 
         model.addAttribute("buy_order", buyOrder);
@@ -282,7 +285,7 @@ public class OneclickMallDeferredController extends BaseController {
             Model model)
             throws IOException, TransactionCaptureException {
 
-        model.addAttribute(MODEL_NAVIGATION, NAV_CAPTURE);        
+        model.addAttribute(MODEL_NAVIGATION, NAV_CAPTURE);
         addBreadcrumbs(model, "Capturar", "#");
 
         model.addAttribute("buy_order", buyOrder);
