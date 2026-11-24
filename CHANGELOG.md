@@ -5,6 +5,14 @@ Toda la historia de cambios de este proyecto será documentada en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 24-11-2026
+
+Esta versión agrega el producto Transacción Completa en su modalidad simultánea.
+
+### Agrega
+
+- Se agrega el producto Transacción Completa en su modalidad simultánea al menú lateral y al home del proyecto.
+
 ## [1.1.0] - 08-09-2026
 
 Esta versión agrega soporte para el producto Oneclick Mall.
