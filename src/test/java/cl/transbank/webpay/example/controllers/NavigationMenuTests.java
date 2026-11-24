@@ -41,6 +41,16 @@ class NavigationMenuTests {
     }
 
     @Test
+    void desktopAndMobileSidebarsShareCollapsibleKeys() throws Exception {
+        String page = render("/transaccion-completa");
+
+        List<String> desktopKeys = collapsibleKeys(asideById(page, "sidebar-desk"));
+        List<String> mobileKeys = collapsibleKeys(asideById(page, "sidebar"));
+
+        assertThat(desktopKeys).contains("transaccion-completa").containsExactlyElementsOf(mobileKeys);
+    }
+
+    @Test
     void homeShowsTransaccionCompletaCard() throws Exception {
         String home = render("/");
 
@@ -88,6 +98,20 @@ class NavigationMenuTests {
             anchorStart = html.indexOf("<a ", anchorEnd);
         }
         return links;
+    }
+
+    private static List<String> collapsibleKeys(String html) {
+        List<String> keys = new ArrayList<>();
+        int buttonStart = html.indexOf("<button ");
+        while (buttonStart >= 0) {
+            int buttonEnd = html.indexOf('>', buttonStart);
+            String button = html.substring(buttonStart, buttonEnd);
+            if (button.contains("class=\"sidebar-collapsible-title\"")) {
+                keys.add(attribute(button, "data-collapsible"));
+            }
+            buttonStart = html.indexOf("<button ", buttonEnd);
+        }
+        return keys;
     }
 
     private static String attribute(String tag, String name) {
