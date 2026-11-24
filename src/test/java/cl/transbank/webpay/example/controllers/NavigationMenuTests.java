@@ -92,7 +92,9 @@ class NavigationMenuTests {
 
     private static String attribute(String tag, String name) {
         String prefix = name + "=\"";
-        int valueStart = tag.indexOf(prefix) + prefix.length();
+        int prefixIndex = tag.indexOf(prefix);
+        assertThat(prefixIndex).as("attribute %s not found in: %s", name, tag).isNotNegative();
+        int valueStart = prefixIndex + prefix.length();
         return tag.substring(valueStart, tag.indexOf('"', valueStart));
     }
 }
