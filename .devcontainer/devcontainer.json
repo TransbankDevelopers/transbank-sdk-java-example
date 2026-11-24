@@ -1,11 +1,10 @@
 {
   "name": "Transbank SDK Java Development Container",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
-  },
-  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/transbank-sdk-java-example",
+  "postCreateCommand": "bash /workspaces/transbank-sdk-java-example/.devcontainer/post-create.sh",
+  "shutdownAction": "stopCompose",
   "forwardPorts": [
     8080
   ],

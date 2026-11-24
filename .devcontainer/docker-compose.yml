@@ -1,0 +1,14 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: sleep infinity
+    environment:
+      MAVEN_ARGS: -Dmaven.clean.failOnError=false
+    volumes:
+      - ..:/workspaces/transbank-sdk-java-example:cached
+      - target:/workspaces/transbank-sdk-java-example/target
+
+volumes:
+  target:
