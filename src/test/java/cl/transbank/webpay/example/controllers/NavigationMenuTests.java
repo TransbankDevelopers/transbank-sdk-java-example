@@ -5,9 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,17 +66,33 @@ class NavigationMenuTests {
     }
 
     private static String asideById(String html, String id) {
-        Matcher matcher = Pattern.compile("<aside[^>]*id=\"" + Pattern.quote(id) + "\"[^>]*>(.*?)</aside>", Pattern.DOTALL)
-                .matcher(html);
-        assertThat(matcher.find()).as("aside with id %s", id).isTrue();
-        return matcher.group(1);
+        int idIndex = html.indexOf("id=\"" + id + "\"");
+        assertThat(idIndex).as("aside with id %s", id).isNotNegative();
+        int asideStart = html.lastIndexOf("<aside", idIndex);
+        int contentStart = html.indexOf('>', idIndex) + 1;
+        int contentEnd = html.indexOf("</aside>", contentStart);
+        assertThat(asideStart).as("opening aside for id %s", id).isNotNegative();
+        assertThat(contentEnd).as("closing aside for id %s", id).isNotNegative();
+        return html.substring(contentStart, contentEnd);
     }
 
     private static List<String> cardLinks(String html) {
-        return Pattern.compile("<a[^>]*href=\"([^\"]+)\"[^>]*class=\"card-info-link\"")
-                .matcher(html)
-                .results()
-                .map(result -> result.group(1))
-                .toList();
+        List<String> links = new ArrayList<>();
+        int anchorStart = html.indexOf("<a ");
+        while (anchorStart >= 0) {
+            int anchorEnd = html.indexOf('>', anchorStart);
+            String anchor = html.substring(anchorStart, anchorEnd);
+            if (anchor.contains("class=\"card-info-link\"")) {
+                links.add(attribute(anchor, "href"));
+            }
+            anchorStart = html.indexOf("<a ", anchorEnd);
+        }
+        return links;
+    }
+
+    private static String attribute(String tag, String name) {
+        String prefix = name + "=\"";
+        int valueStart = tag.indexOf(prefix) + prefix.length();
+        return tag.substring(valueStart, tag.indexOf('"', valueStart));
     }
 }
