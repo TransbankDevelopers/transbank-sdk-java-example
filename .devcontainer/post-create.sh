@@ -4,6 +4,8 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
+sudo chown "$(id -u):$(id -g)" target
+
 if mvn clean install -P no-gpg --no-transfer-progress; then
   echo "Build OK"
 else
